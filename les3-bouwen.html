@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eiland: Lego Objecten Bouwen (Les 3)</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #eef7f2;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+  }
+  .box {
+    background: white;
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    width: 100%;
+    max-width: 680px;
+  }
+  h1 {
+    color: #2E7D4F;
+    margin-top: 0;
+    font-size: 26px;
+  }
+  .subtitel {
+    color: #666;
+    font-style: italic;
+    margin-top: -8px;
+    margin-bottom: 20px;
+  }
+  label.title-label {
+    display: block;
+    font-weight: bold;
+    margin-top: 20px;
+    margin-bottom: 8px;
+    font-size: 18px;
+    color: #333;
+  }
+  input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+  }
+  
+  .opdracht-box {
+    background: #eefaf2;
+    border-left: 5px solid #2E7D4F;
+    padding: 15px;
+    border-radius: 6px;
+    margin: 15px 0;
+    font-size: 16px;
+    line-height: 1.4;
+  }
+
+  /* Grid voor voorbeelden met plaatjes */
+  .grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+  .card {
+    border: 3px solid #ddd;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    background: #fafafa;
+  }
+  .card svg {
+    width: 100%;
+    height: 100px;
+    border-radius: 6px;
+    background: #fff;
+  }
+  .card h3 {
+    margin: 8px 0 4px 0;
+    font-size: 16px;
+    color: #2E7D4F;
+  }
+  .card p {
+    margin: 0;
+    font-size: 13px;
+    color: #555;
+  }
+
+  /* Checkbox styling */
+  .checklist-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    font-size: 17px;
+    background: #f9f9f9;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #eee;
+  }
+  .checklist-item input[type="checkbox"] {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+
+  button {
+    width: 100%;
+    padding: 16px;
+    background: #2E7D4F;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+  button:disabled {
+    background: #aaa;
+    cursor: not-allowed;
+  }
+
+  #status {
+    margin-top: 14px;
+    font-size: 16px;
+    font-weight: bold;
+  }
+  #status.error { color: #c0392b; }
+  #status.ok { color: #2E7D4F; }
+
+  .klaar-scherm {
+    text-align: center;
+    padding: 30px 0;
+  }
+  .klaar-scherm h2 { color: #2E7D4F; font-size: 28px; }
+  .klaar-scherm button {
+    background: #2E5C99;
+    max-width: 280px;
+    margin: 20px auto 0 auto;
+  }
+</style>
+</head>
+<body>
+
+<div class="box">
+
+  <!-- FORMULIER -->
+  <div id="formulier">
+    <h1>🧱 Eiland: Lego Objecten Bouwen</h1>
+    <div class="subtitel">Les 3 — First Lego League</div>
+
+    <label class="title-label" for="namen">1. Vul hier jullie namen in:</label>
+    <input type="text" id="namen" placeholder="Bijv. Sanne, Timo en Lars">
+
+    <div class="opdracht-box">
+      <strong>🧱 Wat gaan jullie doen?</strong><br>
+      Bouw van Lego minimaal 2 spullen voor op het parcours. Hieronder zie je 4 voorbeelden van wat je kunt maken!
+    </div>
+
+    <label class="title-label">Voorbeelden om te bouwen:</label>
+    <div class="grid-container">
+      
+      <!-- Voorbeeld 1 -->
+      <div class="card">
+        <svg viewBox="0 0 100 80">
+          <rect width="100" height="80" fill="#f4f4f4"/>
+          <rect x="25" y="15" width="12" height="55" fill="#e67e22"/>
+          <rect x="63" y="15" width="12" height="55" fill="#e67e22"/>
+          <rect x="25" y="15" width="50" height="12" fill="#f1c40f"/>
+        </svg>
+        <h3>1. De Poort</h3>
+        <p>De robot moet hier onderdoor kunnen rijden</p>
+      </div>
+
+      <!-- Voorbeeld 2 -->
+      <div class="card">
+        <svg viewBox="0 0 100 80">
+          <rect width="100" height="80" fill="#f4f4f4"/>
+          <rect x="42" y="20" width="16" height="50" fill="#e74c3c"/>
+          <path d="M 50 15 L 42 20 L 58 20 Z" fill="#c0392b"/>
+        </svg>
+        <h3>2. Omval-Toren</h3>
+        <p>Een toren die de robot moet omduwen</p>
+      </div>
+
+      <!-- Voorbeeld 3 -->
+      <div class="card">
+        <svg viewBox="0 0 100 80">
+          <rect width="100" height="80" fill="#f4f4f4"/>
+          <rect x="20" y="45" width="60" height="25" fill="#3498db"/>
+          <rect x="30" y="30" width="40" height="15" fill="#2980b9"/>
+        </svg>
+        <h3>3. De Stop-Muur</h3>
+        <p>Een stevig blok waar de robot voor stopt</p>
+      </div>
+
+      <!-- Voorbeeld 4 -->
+      <div class="card">
+        <svg viewBox="0 0 100 80">
+          <rect width="100" height="80" fill="#f4f4f4"/>
+          <rect x="35" y="45" width="30" height="25" fill="#9b59b6"/>
+          <path d="M 50 20 C 35 20 35 45 35 45 L 65 45 C 65 45 65 20 50 20" stroke="#8e44ad" stroke-width="5" fill="none"/>
+        </svg>
+        <h3>4. Ophaal-Blokje</h3>
+        <p>Met een hendeltje om op te pakken</p>
+      </div>
+
+    </div>
+
+    <label class="title-label">2. Vink aan wat gelukt is:</label>
+    <div class="checklist-item">
+      <input type="checkbox" id="check1">
+      <label for="check1">We hebben minimaal 2 Lego-objecten gebouwd</label>
+    </div>
+    <div class="checklist-item">
+      <input type="checkbox" id="check2">
+      <label for="check2">Onze bouwsels zijn stevig genoeg</label>
+    </div>
+    <div class="checklist-item">
+      <input type="checkbox" id="check3">
+      <label for="check3">De bouwsels staan klaar bij het parcours</label>
+    </div>
+
+    <button id="opslaanBtn" onclick="opslaan()">Opslaan en Afronden 🚀</button>
+    <div id="status"></div>
+  </div>
+
+  <!-- KLAAR SCHERM -->
+  <div id="klaarScherm" class="klaar-scherm" style="display:none;">
+    <h2>✅ Super gebouwd!</h2>
+    <p style="font-size: 18px;">Jullie resultaten zijn opgeslagen. Geef het Chromebook door aan het volgende groepje.</p>
+    <button onclick="location.reload()">Volgend groepje</button>
+  </div>
+
+</div>
+
+<!-- Firebase SDK's -->
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCO2ndD-lTBZpRrs-ZxIsBTVjPVza2sFXU",
+    authDomain: "schoolquizapp-28abf.firebaseapp.com",
+    projectId: "schoolquizapp-28abf",
+    storageBucket: "schoolquizapp-28abf.firebasestorage.app",
+    messagingSenderId: "921022621334",
+    appId: "1:921022621334:web:ef582f1e067a77a41284b7"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  const auth = firebase.auth();
+
+  auth.signInAnonymously().catch((err) => console.error("Login mislukt:", err));
+
+  function toonStatus(tekst, type) {
+    const el = document.getElementById('status');
+    el.textContent = tekst;
+    el.className = type;
+  }
+
+  function opslaan() {
+    const namen = document.getElementById('namen').value.trim();
+
+    if (!namen) {
+      toonStatus("⚠️ Vul eerst de namen van je groepje in!", "error");
+      return;
+    }
+
+    const btn = document.getElementById('opslaanBtn');
+    btn.disabled = true;
+    toonStatus("Bezig met opslaan...", "");
+
+    const data = {
+      eiland: "bouwen",
+      les: 3,
+      namen: namen,
+      checklist: {
+        minstens2Gebouwd: document.getElementById('check1').checked,
+        stevigGenoeg: document.getElementById('check2').checked,
+        klaarZetBijParcours: document.getElementById('check3').checked
+      },
+      tijdstip: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    db.collection('les3_inzendingen').add(data)
+      .then(() => {
+        document.getElementById('formulier').style.display = 'none';
+        document.getElementById('klaarScherm').style.display = 'block';
+      })
+      .catch((err) => {
+        console.error(err);
+        toonStatus("Opslaan mislukt: " + err.message, "error");
+        btn.disabled = false;
+      });
+  }
+</script>
+
+</body>
+</html>
