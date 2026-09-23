@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eiland: Parcours Kiezen & Tekenen (Les 3)</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #eef2f7;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+  }
+  .box {
+    background: white;
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    width: 100%;
+    max-width: 680px;
+  }
+  h1 {
+    color: #2E5C99;
+    margin-top: 0;
+    font-size: 26px;
+  }
+  .subtitel {
+    color: #666;
+    font-style: italic;
+    margin-top: -8px;
+    margin-bottom: 20px;
+  }
+  label.title-label {
+    display: block;
+    font-weight: bold;
+    margin-top: 20px;
+    margin-bottom: 8px;
+    font-size: 18px;
+    color: #333;
+  }
+  input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+  }
+  
+  .opdracht-box {
+    background: #eef4fc;
+    border-left: 5px solid #2E5C99;
+    padding: 15px;
+    border-radius: 6px;
+    margin: 15px 0;
+    font-size: 16px;
+    line-height: 1.4;
+  }
+
+  /* Grid voor voorbeelden met plaatjes */
+  .grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+  .card {
+    border: 3px solid #ddd;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    background: #fafafa;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .card:hover {
+    border-color: #2E5C99;
+    background: #f0f5ff;
+  }
+  .card.selected {
+    border-color: #2E5C99;
+    background: #e3edfc;
+    box-shadow: 0 0 10px rgba(46, 92, 153, 0.3);
+  }
+  .card svg {
+    width: 100%;
+    height: 110px;
+    border-radius: 6px;
+    background: #fff;
+  }
+  .card h3 {
+    margin: 8px 0 4px 0;
+    font-size: 16px;
+    color: #2E5C99;
+  }
+  .card p {
+    margin: 0;
+    font-size: 13px;
+    color: #555;
+  }
+
+  /* Checkbox styling */
+  .checklist-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    font-size: 17px;
+    background: #f9f9f9;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #eee;
+  }
+  .checklist-item input[type="checkbox"] {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+
+  button {
+    width: 100%;
+    padding: 16px;
+    background: #2E5C99;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+  button:disabled {
+    background: #aaa;
+    cursor: not-allowed;
+  }
+
+  #status {
+    margin-top: 14px;
+    font-size: 16px;
+    font-weight: bold;
+  }
+  #status.error { color: #c0392b; }
+  #status.ok { color: #2E5C99; }
+
+  .klaar-scherm {
+    text-align: center;
+    padding: 30px 0;
+  }
+  .klaar-scherm h2 { color: #2E5C99; font-size: 28px; }
+  .klaar-scherm button {
+    background: #2E7D4F;
+    max-width: 280px;
+    margin: 20px auto 0 auto;
+  }
+</style>
+</head>
+<body>
+
+<div class="box">
+
+  <!-- FORMULIER -->
+  <div id="formulier">
+    <h1>🗺️ Eiland: Parcours Kiezen & Tekenen</h1>
+    <div class="subtitel">Les 3 — First Lego League</div>
+
+    <label class="title-label" for="namen">1. Vul hier jullie namen in:</label>
+    <input type="text" id="namen" placeholder="Bijv. Daan, Lieke en Thomas">
+
+    <div class="opdracht-box">
+      <strong>📋 Wat gaan jullie doen?</strong><br>
+      Kies hieronder één parcours dat jullie leuk vinden. Teken dit parcours daarna na op het grote papier!
+    </div>
+
+    <label class="title-label">2. Klik op het parcours dat jullie kiezen:</label>
+    <div class="grid-container">
+      
+      <!-- Optie 1 -->
+      <div class="card" onclick="selecteerParcours(this, 'De L-Bocht')">
+        <svg viewBox="0 0 100 80">
+          <rect width="100" height="80" fill="#f4f4f4"/>
+          <path d="M 20 65 L 20 25 L 80 25" stroke="#2E5C99" stroke-width="8" fill="none" stroke-linecap="round"/>
+          <circle cx="20" cy="65" r="5" fill="#2E7D4F"/>
+          <rect x="73" y="18" width="14" height="14" fill="#c0392b"/>
+        </svg>
+        <h3>1. De L-Bocht</h3>
+        <p>Rechtdoor en 1 scherpe bocht maken</p>
+      </div>
+
+      <!-- Optie 2 -->
+      <div class="card" onclick="selecteerParcours(this, 'De Slalom')">
+        <svg viewBox="0 0 100 80">
+          <rect width="100" height="80" fill="#f4f4f4"/>
+          <path d="M 15 65 Q 35 65 35 40 T 65 40 T 85 15" stroke="#2E5C99" stroke-width="6" fill="none"/>
+          <circle cx="35" cy="25" r="4" fill="#333"/>
+          <circle cx="65" cy="55" r="4" fill="#333"/>
+        </svg>
+        <h3>2. De Slalom</h3>
+        <p>Slingeren tussen de paaltjes door</p>
+      </div>
+
+      <!-- Optie 3 -->
+      <div class="card" onclick="selecteerParcours(this, 'Het Vierkant')">
+        <svg viewBox="0 0 100 80">
+          <rect width="100" height="80" fill="#f4f4f4"/>
+          <rect x="25" y="15" width="50" height="50" stroke="#2E5C99" stroke-width="6" fill="none"/>
+          <circle cx="25" cy="65" r="5" fill="#2E7D4F"/>
+        </svg>
+        <h3>3. Het Vierkant</h3>
+        <p>Rondje rijden met 4 haakse bochten</p>
+      </div>
+
+      <!-- Optie 4 -->
+      <div class="card" onclick="selecteerParcours(this, 'De T-Splitsing')">
+        <svg viewBox="0 0 100 80">
+          <rect width="100" height="80" fill="#f4f4f4"/>
+          <path d="M 50 70 L 50 30 M 20 30 L 80 30" stroke="#2E5C99" stroke-width="6" stroke-linecap="round"/>
+          <circle cx="50" cy="70" r="5" fill="#2E7D4F"/>
+          <rect x="15" y="23" width="14" height="14" fill="#c0392b"/>
+          <rect x="71" y="23" width="14" height="14" fill="#c0392b"/>
+        </svg>
+        <h3>4. De T-Splitsing</h3>
+        <p>Kiezen tussen linksaf of rechtsaf</p>
+      </div>
+
+    </div>
+
+    <label class="title-label">3. Vink aan wat gelukt is:</label>
+    <div class="checklist-item">
+      <input type="checkbox" id="check1">
+      <label for="check1">We hebben een parcours gekozen hierboven</label>
+    </div>
+    <div class="checklist-item">
+      <input type="checkbox" id="check2">
+      <label for="check2">We hebben het parcours nagetekend op papier</label>
+    </div>
+    <div class="checklist-item">
+      <input type="checkbox" id="check3">
+      <label for="check3">We weten waar de robot moet starten en stoppen</label>
+    </div>
+
+    <button id="opslaanBtn" onclick="opslaan()">Opslaan en Afronden 🚀</button>
+    <div id="status"></div>
+  </div>
+
+  <!-- KLAAR SCHERM -->
+  <div id="klaarScherm" class="klaar-scherm" style="display:none;">
+    <h2>✅ Top gedaan!</h2>
+    <p style="font-size: 18px;">Jullie keuzes zijn opgeslagen. Geef het Chromebook door aan het volgende groepje.</p>
+    <button onclick="location.reload()">Volgend groepje</button>
+  </div>
+
+</div>
+
+<!-- Firebase SDK's -->
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCO2ndD-lTBZpRrs-ZxIsBTVjPVza2sFXU",
+    authDomain: "schoolquizapp-28abf.firebaseapp.com",
+    projectId: "schoolquizapp-28abf",
+    storageBucket: "schoolquizapp-28abf.firebasestorage.app",
+    messagingSenderId: "921022621334",
+    appId: "1:921022621334:web:ef582f1e067a77a41284b7"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  const auth = firebase.auth();
+
+  auth.signInAnonymously().catch((err) => console.error("Login mislukt:", err));
+
+  let gekozenParcours = "";
+
+  function selecteerParcours(element, naam) {
+    document.querySelectorAll('.card').forEach(c => c.classList.remove('selected'));
+    element.classList.add('selected');
+    gekozenParcours = naam;
+  }
+
+  function toonStatus(tekst, type) {
+    const el = document.getElementById('status');
+    el.textContent = tekst;
+    el.className = type;
+  }
+
+  function opslaan() {
+    const namen = document.getElementById('namen').value.trim();
+
+    if (!namen) {
+      toonStatus("⚠️ Vul eerst de namen van je groepje in!", "error");
+      return;
+    }
+    if (!gekozenParcours) {
+      toonStatus("⚠️ Klik hierboven eerst op een parcours om te kiezen!", "error");
+      return;
+    }
+
+    const btn = document.getElementById('opslaanBtn');
+    btn.disabled = true;
+    toonStatus("Bezig met opslaan...", "");
+
+    const data = {
+      eiland: "parcours",
+      les: 3,
+      namen: namen,
+      gekozenParcours: gekozenParcours,
+      checklist: {
+        parcoursGekozen: document.getElementById('check1').checked,
+        parcoursGetekend: document.getElementById('check2').checked,
+        startStopBepaald: document.getElementById('check3').checked
+      },
+      tijdstip: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    db.collection('les3_inzendingen').add(data)
+      .then(() => {
+        document.getElementById('formulier').style.display = 'none';
+        document.getElementById('klaarScherm').style.display = 'block';
+      })
+      .catch((err) => {
+        console.error(err);
+        toonStatus("Opslaan mislukt: " + err.message, "error");
+        btn.disabled = false;
+      });
+  }
+</script>
+
+</body>
+</html>
