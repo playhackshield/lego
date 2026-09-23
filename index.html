@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>First Lego League — Les 3</title>
+<title>First Lego League — Lesportaal</title>
 <style>
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -14,70 +14,145 @@
     box-sizing: border-box;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
   }
   .box {
     background: white;
-    padding: 36px 30px;
+    padding: 30px;
     border-radius: 16px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.08);
     width: 100%;
-    max-width: 440px;
+    max-width: 550px;
     text-align: center;
   }
-  .icon-header {
-    font-size: 48px;
-    margin-bottom: 10px;
+  .header-icon {
+    font-size: 42px;
+    margin-bottom: 5px;
   }
   h1 {
-    margin: 0 0 6px 0;
+    margin: 0 0 4px 0;
     color: #1e293b;
-    font-size: 28px;
+    font-size: 26px;
   }
   p.subtitle {
-    margin: 0 0 28px 0;
+    margin: 0 0 20px 0;
     color: #64748b;
-    font-size: 16px;
+    font-size: 15px;
+  }
+
+  /* Afbeelding / Poster styling */
+  .voorbeeld-banner {
+    width: 100%;
+    border-radius: 12px;
+    border: 3px solid #e2e8f0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    margin-bottom: 25px;
+    display: block;
+  }
+
+  /* Lesblokken */
+  .les-sectie {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 20px;
+    text-align: left;
+  }
+  .les-sectie h2 {
+    margin: 0 0 12px 0;
+    font-size: 18px;
+    color: #334155;
+    border-bottom: 2px solid #cbd5e1;
+    padding-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .badge {
+    font-size: 11px;
+    background: #2E5C99;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .badge.oud {
+    background: #94a3b8;
+  }
+
+  /* Knoppen binnen lesblokken */
+  .knoppen-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
   }
   a.knop {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
+    gap: 8px;
     text-decoration: none;
     color: white;
-    font-size: 20px;
+    font-size: 15px;
     font-weight: bold;
-    padding: 20px;
-    border-radius: 12px;
-    margin-top: 16px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    padding: 14px 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
+    text-align: center;
   }
   a.knop:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.12);
   }
   a.knop:active {
     transform: translateY(0);
   }
+  
   a.parcours { background: #2E5C99; }
   a.bouwen { background: #2E7D4F; }
+  a.oud-knop { background: #64748b; }
 </style>
 </head>
 <body>
-  <div class="box">
-    <div class="icon-header">🤖</div>
-    <h1>First Lego League</h1>
-    <p class="subtitle">Kies hieronder het eiland van jouw groepje:</p>
 
-    <a class="knop parcours" href="les3_parcours.html">
-      <span>🗺️</span> Eiland: Parcours
-    </a>
-    
-    <a class="knop bouwen" href="les3_bouwen.html">
-      <span>🧱</span> Eiland: Bouwen
-    </a>
+  <div class="box">
+    <div class="header-icon">🤖</div>
+    <h1>First Lego League</h1>
+    <p class="subtitle">Kies hieronder jouw les en eiland:</p>
+
+    <!-- Voorbeeldafbeelding / Presentatie -->
+    <img src="les3_presentatie.jpg" alt="Voorbeeld Parcours FLL" class="voorbeeld-banner">
+
+    <!-- LES 3 (ACTUEEL) -->
+    <div class="les-sectie">
+      <h2>Les 3 <span class="badge">Nieuw</span></h2>
+      <div class="knoppen-grid">
+        <a class="knop parcours" href="les3_parcours.html">
+          <span>🗺️</span> Parcours
+        </a>
+        <a class="knop bouwen" href="les3_bouwen.html">
+          <span>🧱</span> Bouwen
+        </a>
+      </div>
+    </div>
+
+    <!-- LES 2 -->
+    <div class="les-sectie">
+      <h2>Les 2 <span class="badge oud">Vorige les</span></h2>
+      <div class="knoppen-grid">
+        <a class="knop oud-knop" href="les2_parcours.html">
+          <span>🗺️</span> Parcours
+        </a>
+        <a class="knop oud-knop" href="les2_bouwen.html">
+          <span>🧱</span> Bouwen
+        </a>
+      </div>
+    </div>
+
   </div>
+
 </body>
 </html>
