@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>FLL Les 1</title>
+<title>First Lego League — Les 3</title>
 <style>
   body {
-    font-family: Arial, sans-serif;
-    background: #f0f0f0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #eef2f7;
     margin: 0;
     padding: 20px;
-    height: 100vh;
+    min-height: 100vh;
     box-sizing: border-box;
     display: flex;
     justify-content: center;
@@ -18,35 +18,66 @@
   }
   .box {
     background: white;
-    padding: 36px;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 36px 30px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
     width: 100%;
-    max-width: 420px;
+    max-width: 440px;
     text-align: center;
   }
+  .icon-header {
+    font-size: 48px;
+    margin-bottom: 10px;
+  }
   h1 {
-    margin-top: 0;
-    color: #333;
+    margin: 0 0 6px 0;
+    color: #1e293b;
+    font-size: 28px;
+  }
+  p.subtitle {
+    margin: 0 0 28px 0;
+    color: #64748b;
+    font-size: 16px;
   }
   a.knop {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
     text-decoration: none;
     color: white;
-    font-size: 18px;
-    padding: 18px;
-    border-radius: 6px;
-    margin-top: 18px;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 16px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
-  a.bouwen { background: #2E7D4F; }
+  a.knop:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+  }
+  a.knop:active {
+    transform: translateY(0);
+  }
   a.parcours { background: #2E5C99; }
+  a.bouwen { background: #2E7D4F; }
 </style>
 </head>
 <body>
   <div class="box">
-    <h1>FLL — Les 2</h1>
-    <a class="knop bouwen" href="les2_bouwen.html">🧱 Eiland: Bouwen</a>
-    <a class="knop parcours" href="les2_parcours.html">🗺️ Eiland: Parcours bedenken</a>
+    <div class="icon-header">🤖</div>
+    <h1>First Lego League</h1>
+    <p class="subtitle">Kies hieronder het eiland van jouw groepje:</p>
+
+    <a class="knop parcours" href="les3_parcours.html">
+      <span>🗺️</span> Eiland: Parcours
+    </a>
+    
+    <a class="knop bouwen" href="les3_bouwen.html">
+      <span>🧱</span> Eiland: Bouwen
+    </a>
   </div>
 </body>
 </html>
