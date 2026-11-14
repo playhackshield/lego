@@ -1,0 +1,23 @@
+{
+    "ratio": 95,
+    "iframes": [
+        { 
+            "id": 3, 
+            "title": "Bouw-opdracht", 
+            "url": "https://playhackshield.github.io/lego/assets/les01/les2_bouwen.html" 
+        },        
+        { 
+            "id": 4, 
+            "title": "Parcours-opdracht", 
+            "url": "https://playhackshield.github.io/lego/assets/les01/les2_parcours.html" 
+        }
+    ],
+    "playlist" : [
+        {
+            "title": "Intro",
+            "type": "video",
+            "src": "assets/cyberpesten/cyberpesten.mp4",
+            "loop": false
+        }
+    ]
+}
