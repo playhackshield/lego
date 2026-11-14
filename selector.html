@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HackShield</title>
+    
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: white;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+        
+        .main-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        #main-area {
+            margin: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #thumbnails-area {
+            margin: 0 10px 10px 10px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            position: relative;
+            flex-shrink: 0;
+        }
+        
+        /* Alle iframes in DOM */
+        .iframe {
+            position: absolute;
+            border: none;
+            background: white;
+        }
+        
+        /* Hoofd iframe */
+        .iframe.main {
+            border-radius: 6px;
+            z-index: 10;
+        }
+        
+        /* Thumbnail iframe */
+        .iframe.thumbnail {
+            border-radius: 10px;
+            z-index: 5;
+            pointer-events: none;
+        }
+        
+        /* Thumbnail wrapper - nu volledig klikbaar */
+        .thumbnail-wrapper {
+            position: relative;
+            height: 100%;
+            cursor: pointer;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        /* Dikke border voor thumbnails */
+        .thumbnail-border {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 8px solid #4a6fa5; /* Blauwe rand */
+            border-radius: 12px;
+            pointer-events: none;
+            z-index: 2;
+            transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .thumbnail-wrapper:hover .thumbnail-border {
+            border-color: #2a4a7e;
+            border-width: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+        
+        /* Achtergrondkleur voor thumbnail (lichter blauw dan de rand) */
+        .thumbnail-background {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
+            background-color: #7fa3d6; /* Lichter blauw dan border #4a6fa5 */
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        /* Titel voor thumbnails */
+        .thumbnail-title {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            z-index: 3;
+            pointer-events: none;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            padding: 5px 10px;
+            background-color: rgba(74, 111, 165, 0.3);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div id="main-area"></div>
+        <div id="thumbnails-area"></div>
+    </div>
+
+    <script>
+        let config = null; // Wordt geladen vanuit JSON
+        let iframes = [];
+        let mainIndex = 0;
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            const mainArea = document.getElementById('main-area');
+            const thumbnailsArea = document.getElementById('thumbnails-area');
+            const mainContainer = document.querySelector('.main-container');
+            
+            // Haal ID parameter op uit URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const configId = urlParams.get('id');
+            
+            if (!configId) {
+                alert('Geen ID parameter gevonden in URL. Gebruik: index.html?id=configuratie');
+                return;
+            }
+            
+            try {
+                // Laad JSON bestand
+                const response = await fetch(`assets/${configId}/config.json`);
+                
+                if (!response.ok) {
+                    throw new Error(`Kon JSON niet laden: ${response.status}`);
+                }
+                
+                config = await response.json();
+                
+                // Valideer configuratie
+                if (!config.iframes || !Array.isArray(config.iframes) || config.iframes.length === 0) {
+                    throw new Error('Ongeldige JSON structuur: iframes array ontbreekt of is leeg');
+                }
+                
+                if (typeof config.ratio !== 'number' || config.ratio < 10 || config.ratio > 90) {
+                    config.ratio = 95; // Standaardwaarde
+                }
+                
+            } catch (error) {
+                console.error('Fout bij laden configuratie:', error);
+                alert(`Fout bij laden configuratie: ${error.message}`);
+                return;
+            }
+            
+            // Maak alle iframes aan
+            config.iframes.forEach((frame, index) => {
+                const iframe = document.createElement('iframe');
+                iframe.className = 'iframe';
+                iframe.src = frame.url;
+                iframe.title = frame.title || `Iframe ${index + 1}`;
+                iframe.dataset.id = frame.id || index;
+                iframe.dataset.index = index;
+                
+                document.body.appendChild(iframe);
+                iframes.push(iframe);
+            });
+            
+            // Maak thumbnail wrappers
+            function createThumbnailWrappers() {
+                // Verwijder bestaande wrappers
+                thumbnailsArea.innerHTML = '';
+                
+                // Maak wrappers voor alle iframes behalve de huidige main
+                for (let i = 0; i < config.iframes.length; i++) {
+                    if (i === mainIndex) continue; // Skip hoofd iframe
+                    
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'thumbnail-wrapper';
+                    wrapper.dataset.index = i;
+                    
+                    // Achtergrondkleur
+                    const background = document.createElement('div');
+                    background.className = 'thumbnail-background';
+                    
+                    // Titel
+                    const title = document.createElement('div');
+                    title.className = 'thumbnail-title';
+                    title.textContent = config.iframes[i].title || `Iframe ${i + 1}`;
+                    
+                    // Border
+                    const border = document.createElement('div');
+                    border.className = 'thumbnail-border';
+                    
+                    // Directe klik event
+                    wrapper.addEventListener('click', function() {
+                        switchIframe(i);
+                    });
+                    
+                    wrapper.appendChild(background);
+                    wrapper.appendChild(title);
+                    wrapper.appendChild(border);
+                    thumbnailsArea.appendChild(wrapper);
+                }
+            }
+            
+            // Initialiseer wrappers
+            createThumbnailWrappers();
+            updateLayout();
+            
+            // Update layout
+            function updateLayout() {
+                const containerHeight = mainContainer.clientHeight;
+                
+                // Bereken hoogtes op basis van ratio uit config
+                const mainHeight = Math.max(50, (containerHeight * config.ratio / 100) - 20);
+                const thumbHeight = Math.max(80, (containerHeight * (100 - config.ratio) / 100) - 20);
+                
+                // Stel hoogtes in
+                mainArea.style.height = mainHeight + 'px';
+                thumbnailsArea.style.height = thumbHeight + 'px';
+                
+                // Herpositioneer iframes
+                setTimeout(positionIframes, 10);
+            }
+            
+            // Positioneer alle iframes
+            function positionIframes() {
+                const mainRect = mainArea.getBoundingClientRect();
+                
+                // Hoofd iframe
+                const mainIframe = iframes[mainIndex];
+                mainIframe.className = 'iframe main';
+                mainIframe.style.top = mainRect.top + 'px';
+                mainIframe.style.left = mainRect.left + 'px';
+                mainIframe.style.width = mainRect.width + 'px';
+                mainIframe.style.height = mainRect.height + 'px';
+                mainIframe.style.display = 'block';
+                mainIframe.style.pointerEvents = 'auto';
+                
+                // Thumbnail iframes - we verbergen ze omdat we de achtergrond en titel tonen
+                const wrappers = document.querySelectorAll('.thumbnail-wrapper');
+                
+                wrappers.forEach((wrapper) => {
+                    // De iframe index staat op de wrapper
+                    const iframeIndex = parseInt(wrapper.dataset.index);
+                    
+                    if (iframeIndex >= 0 && iframeIndex < iframes.length) {
+                        const iframe = iframes[iframeIndex];
+                        // Verberg de iframe voor thumbnails - we tonen alleen achtergrond en titel
+                        iframe.style.display = 'none';
+                    }
+                });
+            }
+            
+            // Switch iframe
+            function switchIframe(newMainIndex) {
+                // Update hoofd index
+                mainIndex = newMainIndex;
+                
+                // Maak nieuwe wrappers
+                createThumbnailWrappers();
+                
+                // Herpositioneer iframes
+                positionIframes();
+            }
+            
+            // Bij resize
+            window.addEventListener('resize', updateLayout);
+            
+            // Initial positionering
+            setTimeout(updateLayout, 100);
+        });
+    </script>
+</body>
+</html>

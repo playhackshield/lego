@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>(v1.1.9) HackShield</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            margin: 0;
+            padding: 20px;
+            background: white;
+            font-family: monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+            user-select: none;
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100vw;
+            height: 100vh;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        #contentDisplay {
+            background: white;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+            width: 1600px;
+            height: 900px;
+            transform-origin: center center;
+            max-width: 100%;
+            max-height: 100%;
+        }
+        
+        #contentDisplay video,
+        #contentDisplay iframe {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        
+        video {
+            object-fit: contain;
+            background: white;
+        }
+        
+        iframe {
+            border: none;
+            background: #fff;
+        }
+        
+        .controls {
+            position: fixed;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 15px;
+            border-radius: 50px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            z-index: 1000;
+            cursor: move;
+            transition: box-shadow 0.2s;
+            /* Vaste grootte voor verticale layout */
+            width: 50px;
+            height: auto;
+            min-width: 50px;
+            /* Standaard positie: linksboven in het scherm */
+            left: 20px;
+            top: 20px;
+            transform: none;
+            right: auto;
+            bottom: auto;
+        }
+        
+        .controls.dragging {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            opacity: 0.9;
+            cursor: grabbing;
+        }
+        
+        .control-btn {
+            background: #333;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            font-size: 24px;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        
+        .scale-btn {
+            width: 40px;
+            height: 40px;
+            font-size: 18px;
+            background: #666;
+        }
+        
+        .control-btn:hover {
+            background: #555;
+            transform: scale(1.05);
+        }
+        
+        .control-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .control-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
+        .scale-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            z-index: 1000;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            cursor: move;
+            user-select: none;
+        }
+        
+        .nav-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        
+        .scale-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+            padding: 10px 0;
+            flex-shrink: 0;
+        }
+        
+        /* Fullscreen mode styling */
+        body.fullscreen {
+            padding: 0;
+        }
+        
+        body.fullscreen .container {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="scale-indicator" id="scaleIndicator">Schaal: 100%</div>
+    
+    <div class="container">
+        <div id="contentDisplay"></div>
+    </div>
+    
+    <div class="controls" id="controls">
+        <div class="nav-controls">
+            <button class="control-btn" id="prevBtn">&lt;</button>
+            <button class="control-btn" id="pauseBtn">⏸</button>
+            <button class="control-btn" id="nextBtn">&gt;</button>
+        </div>
+        
+        <div class="scale-controls">
+            <button class="control-btn scale-btn" id="zoomOutBtn">−</button>
+            <button class="control-btn" id="resetScaleBtn">⟲</button>
+            <button class="control-btn scale-btn" id="zoomInBtn">+</button>
+        </div>
+    </div>
+
+    <script>
+        // Playlist - wordt geladen vanuit JSON
+        let playlist = [];
+
+        // DOM elements
+        const contentDisplay = document.getElementById('contentDisplay');
+        const container = document.querySelector('.container');
+        const controls = document.getElementById('controls');
+        const scaleIndicator = document.getElementById('scaleIndicator');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const zoomInBtn = document.getElementById('zoomInBtn');
+        const zoomOutBtn = document.getElementById('zoomOutBtn');
+        const resetScaleBtn = document.getElementById('resetScaleBtn');
+        
+        // State
+        let currentIndex = 0;
+        let currentElement = null;
+        let scale = 1.0;
+        const minScale = 0.3;
+        const maxScale = 2.0;
+        const scaleStep = 0.01;
+        let isFirstLoad = true; // ← nieuw: houdt bij of dit de eerste keer is
+        
+        // Drag state voor controls
+        let isDragging = false;
+        let dragStartX = 0;
+        let dragStartY = 0;
+        let controlsStartX = 0;
+        let controlsStartY = 0;
+        
+        // Helper functies
+        function getNextIndex(index) {
+            return (index + 1) % playlist.length;
+        }
+        
+        function getPrevIndex(index) {
+            return (index - 1 + playlist.length) % playlist.length;
+        }
+        
+        // Update de schaal
+        function updateScale() {
+            contentDisplay.style.transform = `scale(${scale})`;
+            container.style.transform = `scale(${scale})`;
+            
+            const percentage = Math.round(scale * 100);
+            scaleIndicator.textContent = `Schaal: ${percentage}%`;
+            
+            zoomInBtn.disabled = scale >= maxScale;
+            zoomOutBtn.disabled = scale <= minScale;
+            
+            localStorage.setItem('playerScale', scale.toString());
+        }
+        
+        // Zoom in
+        function zoomIn() {
+            if (scale < maxScale) {
+                scale = Math.min(maxScale, scale + scaleStep);
+                scale = parseFloat(scale.toFixed(2));
+                updateScale();
+            }
+        }
+        
+        // Zoom out
+        function zoomOut() {
+            if (scale > minScale) {
+                scale = Math.max(minScale, scale - scaleStep);
+                scale = parseFloat(scale.toFixed(2));
+                updateScale();
+            }
+        }
+        
+        // Reset schaal
+        function resetScale() {
+            scale = 1.0;
+            updateScale();
+        }
+        
+        // Laad en toon content
+        function loadContent(index, autoplay = true) {
+            if (playlist.length === 0) return;
+            
+            currentIndex = index;
+            const item = playlist[currentIndex];
+            
+            while (contentDisplay.firstChild) {
+                contentDisplay.removeChild(contentDisplay.firstChild);
+            }
+            
+            pauseBtn.disabled = item.type !== "video";
+            
+            if (item.type === "video") {
+                currentElement = document.createElement('video');
+                currentElement.src = item.src;
+                currentElement.loop = item.loop;
+                currentElement.autoplay = autoplay;        // ← alleen eerste keer false
+                currentElement.controls = false;
+                currentElement.style.width = '100%';
+                currentElement.style.height = '100%';
+                
+                // Zet icoon op basis van of video speelt
+                pauseBtn.textContent = autoplay ? '⏸' : '▶';
+                
+                currentElement.onended = () => {
+                    if (!item.loop) {
+                        if (currentIndex < playlist.length - 1) {
+                            next();
+                        }
+                    }
+                };
+                
+                currentElement.addEventListener('play', () => {
+                    pauseBtn.textContent = '⏸';
+                });
+                
+                currentElement.addEventListener('pause', () => {
+                    pauseBtn.textContent = '▶';
+                });
+                
+            } else if (item.type === "iframe") {
+                currentElement = document.createElement('iframe');
+                currentElement.src = item.src;
+                currentElement.style.width = '100%';
+                currentElement.style.height = '100%';
+                currentElement.frameBorder = "0";
+            }
+            
+            contentDisplay.appendChild(currentElement);
+        }
+        
+        // Naar volgende
+        function next() {
+            if (playlist.length === 0) return;
+            loadContent(getNextIndex(currentIndex), true);
+        }
+        
+        // Naar vorige
+        function prev() {
+            if (playlist.length === 0) return;
+            loadContent(getPrevIndex(currentIndex), true);
+        }
+        
+        // Pauzeer/speel
+        function togglePause() {
+            if (playlist.length === 0) return;
+            if (currentElement && playlist[currentIndex].type === "video") {
+                if (currentElement.paused) {
+                    currentElement.play();
+                } else {
+                    currentElement.pause();
+                }
+            }
+        }
+        
+        // Controls drag functionaliteit
+        function startDrag(e) {
+            if (e.target.tagName === 'BUTTON') return;
+            
+            isDragging = true;
+            controls.classList.add('dragging');
+            
+            const rect = controls.getBoundingClientRect();
+            controlsStartX = rect.left;
+            controlsStartY = rect.top;
+            
+            dragStartX = e.clientX || e.touches[0].clientX;
+            dragStartY = e.clientY || e.touches[0].clientY;
+            
+            e.preventDefault();
+        }
+        
+        function doDrag(e) {
+            if (!isDragging) return;
+            
+            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+            
+            if (!clientX || !clientY) return;
+            
+            const deltaX = clientX - dragStartX;
+            const deltaY = clientY - dragStartY;
+            
+            const newX = controlsStartX + deltaX;
+            const newY = controlsStartY + deltaY;
+            
+            controls.style.left = `${newX}px`;
+            controls.style.top = `${newY}px`;
+            controls.style.transform = 'none';
+            controls.style.right = 'auto';
+            controls.style.bottom = 'auto';
+            
+            e.preventDefault();
+        }
+        
+        function stopDrag() {
+            if (!isDragging) return;
+            
+            isDragging = false;
+            controls.classList.remove('dragging');
+            
+            saveControlsPosition();
+        }
+        
+        function saveControlsPosition() {
+            const rect = controls.getBoundingClientRect();
+            const position = {
+                x: rect.left,
+                y: rect.top
+            };
+            localStorage.setItem('controlsPosition', JSON.stringify(position));
+        }
+        
+        function loadControlsPosition() {
+            const saved = localStorage.getItem('controlsPosition');
+            if (saved) {
+                try {
+                    const position = JSON.parse(saved);
+                    controls.style.left = `${position.x}px`;
+                    controls.style.top = `${position.y}px`;
+                    controls.style.transform = 'none';
+                    controls.style.right = 'auto';
+                    controls.style.bottom = 'auto';
+                } catch (e) {
+                    // Do nothing
+                }
+            }
+        }
+        
+        function resetControlsPosition() {
+            controls.style.left = '20px';
+            controls.style.top = '20px';
+            controls.style.right = 'auto';
+            controls.style.bottom = 'auto';
+            controls.style.transform = 'none';
+            saveControlsPosition();
+        }
+        
+        // Event listeners
+        prevBtn.onclick = prev;
+        nextBtn.onclick = next;
+        pauseBtn.onclick = togglePause;
+        zoomInBtn.onclick = zoomIn;
+        zoomOutBtn.onclick = zoomOut;
+        resetScaleBtn.onclick = resetScale;
+        
+        controls.addEventListener('mousedown', startDrag);
+        controls.addEventListener('touchstart', startDrag);
+        
+        document.addEventListener('mousemove', doDrag);
+        document.addEventListener('touchmove', doDrag);
+        
+        document.addEventListener('mouseup', stopDrag);
+        document.addEventListener('touchend', stopDrag);
+        
+        controls.addEventListener('dblclick', resetControlsPosition);
+        
+        document.addEventListener('keydown', (e) => {
+            if (playlist.length === 0) return;
+            
+            if (e.key === 'ArrowLeft') prev();
+            if (e.key === 'ArrowRight') next();
+            if (e.key === ' ' && playlist[currentIndex].type === "video") {
+                e.preventDefault();
+                togglePause();
+            }
+            if ((e.key === '+' || e.key === '=') && !e.shiftKey) {
+                e.preventDefault();
+                zoomIn();
+            }
+            if (e.key === '-' || e.key === '_') {
+                e.preventDefault();
+                zoomOut();
+            }
+            if (e.key === '0') {
+                e.preventDefault();
+                resetScale();
+            }
+        });
+        
+        document.addEventListener('wheel', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                e.preventDefault();
+                if (e.deltaY < 0) {
+                    zoomIn();
+                } else {
+                    zoomOut();
+                }
+            }
+        }, { passive: false });
+        
+        async function init() {
+            try {
+                // Haal ID parameter op uit URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const configId = urlParams.get('id');
+                
+                if (!configId) {
+                    throw new Error('Geen ID parameter gevonden in URL. Gebruik: index.html?id=configuratie');
+                }
+                
+                // Laad playlist vanuit JSON
+                const response = await fetch(`assets/${configId}/config.json`);
+                
+                if (!response.ok) {
+                    throw new Error(`Kon playlist niet laden: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                // Valideer playlist
+                if (!Array.isArray(data.playlist)) {
+                    throw new Error('Ongeldige JSON structuur: playlist moet een array zijn');
+                }
+                
+                if (data.playlist.length === 0) {
+                    throw new Error('Playlist is leeg');
+                }
+                
+                // Valideer elk item
+                data.playlist.forEach((item, index) => {
+                    if (!item.src || !item.type) {
+                        throw new Error(`Item ${index + 1} ontbreekt src of type`);
+                    }
+                    if (!['video', 'iframe'].includes(item.type)) {
+                        throw new Error(`Item ${index + 1}: type moet "video" of "iframe" zijn`);
+                    }
+                });
+                
+                playlist = data.playlist;
+                
+            } catch (error) {
+                console.error('Fout bij laden playlist:', error);
+                scaleIndicator.textContent = `Fout: ${error.message}`;
+                return;
+            }
+            
+            const savedScale = localStorage.getItem('playerScale');
+            if (savedScale) {
+                scale = parseFloat(savedScale);
+                scale = Math.max(minScale, Math.min(maxScale, scale));
+            }
+
+            // Voorlopig uitgezet omdat ik hem standaard altijd linksboven wil laten beginnen
+            //loadControlsPosition(); 
+            updateScale();
+            
+            // ← eerste keer laden: autoplay UIT
+            loadContent(0, false);
+        }
+        
+        // Start
+        init();
+    </script>
+</body>
+</html>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kahoot Startpagina - Dynamisch</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(135deg, #101828, #1d2b53);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 760px;
+      text-align: center;
+    }
+
+    .logo {
+      width: 360px;
+      max-width: 70%;
+      margin-bottom: 28px;
+      border-radius: 18px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+      background: white;
+      padding: 10px;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      margin: 0 0 10px;
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      color: #d0d5dd;
+      margin-bottom: 32px;
+    }
+
+    .kahoot-list {
+      display: grid;
+      gap: 20px;
+    }
+
+    .kahoot-card {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 24px;
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      text-decoration: none;
+      color: white;
+      box-shadow: 0 14px 35px rgba(0, 0, 0, 0.22);
+      backdrop-filter: blur(10px);
+      transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .kahoot-card:hover {
+      transform: translateY(-4px);
+      background: rgba(255, 255, 255, 0.18);
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.3);
+    }
+
+    .kahoot-info {
+      text-align: left;
+    }
+
+    .kahoot-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .kahoot-description {
+      color: #d0d5dd;
+      font-size: 1rem;
+    }
+
+    .open-button {
+      background: #ffcc00;
+      color: #101828;
+      font-weight: 800;
+      font-size: 1rem;
+      padding: 14px 22px;
+      border-radius: 999px;
+      min-width: 100px;
+      text-align: center;
+      box-shadow: 0 8px 18px rgba(255, 204, 0, 0.35);
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .kahoot-card:hover .open-button {
+      transform: scale(1.05);
+      background: #ffe066;
+    }
+
+    .footer-note {
+      margin-top: 28px;
+      color: #98a2b3;
+      font-size: 0.95rem;
+    }
+
+    .error-message {
+      background: rgba(220, 38, 38, 0.8);
+      padding: 20px;
+      border-radius: 24px;
+      color: white;
+    }
+
+    @media (max-width: 560px) {
+      h1 { font-size: 1.8rem; }
+      .kahoot-card {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+      }
+      .kahoot-info { text-align: center; }
+      .open-button { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <img class="logo" src="https://playhackshield.github.io/HackShield/assets/kahoot01.png" alt="Logo" />
+
+    <div id="dynamic-content">
+      <!-- Wordt dynamisch gevuld met titel, subtitle en quizlijst -->
+      <p>Gegevens laden...</p>
+    </div>
+
+    <p class="footer-note">Veel plezier! 🧠</p>
+  </main>
+
+  <script>
+    // Haal de 'data' parameter uit de URL
+    function getParameterByName(name) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(name);
+    }
+
+    async function laadKahoots() {
+      const jsonBestand = getParameterByName('data');
+      if (!jsonBestand) {
+        toonFout('Geen JSON-bestand opgegeven. Gebruik ?data=bestand.json');
+        return;
+      }
+
+      try {
+        const response = await fetch(jsonBestand);
+        if (!response.ok) throw new Error(`Kan bestand niet laden (${response.status})`);
+        const data = await response.json();
+
+        // Verwachte JSON-structuur:
+        // {
+        //   "titel": "AI & Digitale Weerbaarheid 🤖",
+        //   "subtitel": "Kies hieronder welke Kahoot je wilt openen.",
+        //   "quizes": [
+        //     {
+        //       "titel": "🎮 Kahoot - Level 1",
+        //       "beschrijving": "Start met de basis: AI, nep, echt en slim nadenken.",
+        //       "url": "https://play.kahoot.it/v2/lobby?quizId=..."
+        //     },
+        //     ...
+        //   ]
+        // }
+
+        if (!data.quizes || !Array.isArray(data.quizes)) {
+          throw new Error('JSON mist "quizes" array');
+        }
+
+        renderPagina(data);
+      } catch (error) {
+        console.error(error);
+        toonFout(`Fout bij laden: ${error.message}`);
+      }
+    }
+
+    function renderPagina(data) {
+      const container = document.getElementById('dynamic-content');
+      if (!container) return;
+
+      // Titel en subtitel
+      const titel = data.titel || 'Kahoot Startpagina';
+      const subtitel = data.subtitel || 'Kies een quiz hieronder.';
+
+      // HTML opbouwen
+      let html = `
+        <h1>${escapeHtml(titel)}</h1>
+        <p class="subtitle">${escapeHtml(subtitel)}</p>
+        <section class="kahoot-list">
+      `;
+
+      // Kaarten genereren
+      for (const quiz of data.quizes) {
+        const quizTitel = escapeHtml(quiz.titel || 'Onbekende quiz');
+        const beschrijving = escapeHtml(quiz.beschrijving || '');
+        const url = quiz.url || '#';
+        html += `
+          <a class="kahoot-card" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">
+            <div class="kahoot-info">
+              <div class="kahoot-title">${quizTitel}</div>
+              <div class="kahoot-description">${beschrijving}</div>
+            </div>
+            <div class="open-button">Open</div>
+          </a>
+        `;
+      }
+
+      html += `</section>`;
+      container.innerHTML = html;
+    }
+
+    function toonFout(bericht) {
+      const container = document.getElementById('dynamic-content');
+      if (container) {
+        container.innerHTML = `<div class="error-message">⚠️ ${escapeHtml(bericht)}</div>`;
+      }
+    }
+
+    // Eenvoudige bescherming tegen XSS
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    // Start het laden
+    laadKahoots();
+  </script>
+</body>
+</html>
