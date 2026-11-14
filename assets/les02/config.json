@@ -2,24 +2,14 @@
     "ratio": 95,
     "iframes": [
         { 
-            "id": 0, 
-            "title": "HackShield", 
-            "url": "https://hackshieldgame.com/nl/game" 
-        },
-        { 
-            "id": 2, 
-            "title": "Video", 
-            "url": "https://playhackshield.github.io/HackShield/presenter.html?id=cyberpesten" 
-        },
-        { 
             "id": 3, 
-            "title": "Geheim", 
-            "url": "https://playhackshield.github.io/HackShield/assets/cyberpesten/de_echte_magie.html" 
+            "title": "Bouw-opdracht", 
+            "url": "https://playhackshield.github.io/lego/assets/cyberpesten/les2_bouwen.html" 
         },        
         { 
             "id": 4, 
-            "title": "Beoordeling", 
-            "url": "https://playhackshield.github.io/behavior/index.html" 
+            "title": "Parcours-opdracht", 
+            "url": "https://playhackshield.github.io/lego/assets/cyberpesten/les2_parcours.html" 
         }
     ],
     "playlist" : [
