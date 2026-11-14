@@ -1,0 +1,33 @@
+{
+    "ratio": 95,
+    "iframes": [
+        { 
+            "id": 0, 
+            "title": "HackShield", 
+            "url": "https://hackshieldgame.com/nl/game" 
+        },
+        { 
+            "id": 2, 
+            "title": "Video", 
+            "url": "https://playhackshield.github.io/HackShield/presenter.html?id=cyberpesten" 
+        },
+        { 
+            "id": 3, 
+            "title": "Geheim", 
+            "url": "https://playhackshield.github.io/HackShield/assets/cyberpesten/de_echte_magie.html" 
+        },        
+        { 
+            "id": 4, 
+            "title": "Beoordeling", 
+            "url": "https://playhackshield.github.io/behavior/index.html" 
+        }
+    ],
+    "playlist" : [
+        {
+            "title": "Intro",
+            "type": "video",
+            "src": "assets/cyberpesten/cyberpesten.mp4",
+            "loop": false
+        }
+    ]
+}
