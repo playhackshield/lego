@@ -4,12 +4,12 @@
         { 
             "id": 3, 
             "title": "Bouw-opdracht", 
-            "url": "https://playhackshield.github.io/lego/assets/les03/les3_bouwen.html" 
+            "url": "https://playhackshield.github.io/lego/assets/les03/les3.html" 
         },        
         { 
             "id": 4, 
-            "title": "Parcours-opdracht", 
-            "url": "https://playhackshield.github.io/lego/assets/les03/les3_parcours.html" 
+            "title": "Beoordeling", 
+            "url": "https://playhackshield.github.io/behavior/" 
         }
     ],
     "playlist" : [
