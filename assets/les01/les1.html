@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Les 1: Welkom in het Robot-Lab — First Lego League</title>
+<style>
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #0f172a;
+    margin: 0;
+    padding: 16px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #1e293b;
+  }
+
+  .presentation-container {
+    background: #ffffff;
+    width: 100%;
+    max-width: 960px;
+    min-height: 560px;
+    border-radius: 20px;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+
+  /* Bovenbalk met voortgang */
+  .top-bar {
+    background: #f8fafc;
+    padding: 14px 28px;
+    border-bottom: 2px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+    font-weight: 600;
+    color: #64748b;
+  }
+  .dots {
+    display: flex;
+    gap: 8px;
+  }
+  .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #cbd5e1;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .dot.active {
+    background: #2E5C99;
+    transform: scale(1.25);
+  }
+
+  /* Slide-inhoud */
+  .slide {
+    display: none;
+    padding: 32px 44px;
+    flex-grow: 1;
+    animation: fadeIn 0.25s ease;
+  }
+  .slide.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  h1 {
+    font-size: 36px;
+    margin: 0 0 12px 0;
+    color: #1e293b;
+  }
+  h2 {
+    font-size: 28px;
+    margin: 0 0 8px 0;
+    color: #2E5C99;
+  }
+  .lead {
+    font-size: 19px;
+    color: #475569;
+    margin: 0 0 24px 0;
+    line-height: 1.5;
+  }
+
+  /* Slide 1 hero */
+  .hero {
+    text-align: center;
+    padding: 20px 10px;
+  }
+  .hero-emoji {
+    font-size: 76px;
+    margin-bottom: 12px;
+  }
+  .hero h1 {
+    font-size: 42px;
+    color: #2E5C99;
+  }
+  .hero-pills {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 24px;
+  }
+  .pill {
+    background: #eef4fc;
+    color: #2E5C99;
+    font-weight: 700;
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-size: 17px;
+  }
+
+  /* Grid kaarten */
+  .grid-4 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  @media (max-width: 650px) {
+    .grid-4 { grid-template-columns: 1fr; }
+  }
+  .info-card {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 18px 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .info-card .icon {
+    font-size: 34px;
+    line-height: 1;
+  }
+  .info-card h3 {
+    margin: 0 0 6px 0;
+    font-size: 19px;
+    color: #1e293b;
+  }
+  .info-card p {
+    margin: 0;
+    font-size: 15px;
+    color: #475569;
+    line-height: 1.4;
+  }
+
+  /* Slide 3: Eiland-structuur */
+  .islands-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 18px;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 700px) {
+    .islands-row { grid-template-columns: 1fr; }
+  }
+  .island-box {
+    border-radius: 14px;
+    padding: 22px;
+    text-align: center;
+  }
+  .island-robot {
+    background: #eef4fc;
+    border: 3px solid #2E5C99;
+  }
+  .island-build {
+    background: #eefaf2;
+    border: 3px solid #2E7D4F;
+  }
+  .island-box .big-icon {
+    font-size: 44px;
+    margin-bottom: 8px;
+  }
+  .island-box h3 {
+    margin: 0 0 8px 0;
+    font-size: 21px;
+  }
+  .island-box p {
+    margin: 0;
+    font-size: 16px;
+    color: #334155;
+  }
+  .swap-badge {
+    background: #fef3c7;
+    color: #b45309;
+    border: 2px solid #f59e0b;
+    font-weight: 800;
+    padding: 12px 16px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 15px;
+  }
+  .note-banner {
+    background: #f1f5f9;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 16px;
+    color: #334155;
+    text-align: center;
+  }
+
+  /* Slide 4: Kaartensysteem & Prijs */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 720px) {
+    .cards-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  .game-card {
+    border-radius: 12px;
+    padding: 16px 12px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  }
+  .game-card .card-emoji { font-size: 32px; margin-bottom: 6px; }
+  .game-card h3 { margin: 0 0 6px 0; font-size: 17px; }
+  .game-card p { margin: 0; font-size: 13.5px; line-height: 1.35; opacity: 0.95; }
+  .c-green { background: #16a34a; }
+  .c-purple { background: #7e22ce; }
+  .c-yellow { background: #eab308; color: #1e293b; }
+  .c-red { background: #dc2626; }
+
+  .prize-banner {
+    background: #fffbeb;
+    border: 2px solid #f59e0b;
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .prize-banner .trophy { font-size: 40px; }
+  .prize-banner div { font-size: 16px; line-height: 1.4; color: #1e293b; }
+
+  /* Slide 5: Avatar opdracht */
+  .avatar-box {
+    background: #eefaf2;
+    border-left: 6px solid #2E7D4F;
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 18px;
+  }
+  .avatar-box ul {
+    margin: 0;
+    padding-left: 22px;
+  }
+  .avatar-box li {
+    font-size: 19px;
+    margin-bottom: 12px;
+    line-height: 1.4;
+  }
+  .avatar-box li:last-child { margin-bottom: 0; }
+  .kw {
+    font-weight: 800;
+    color: #2E7D4F;
+  }
+
+  /* Navigatiebalk onderaan */
+  .nav-bar {
+    background: #f8fafc;
+    padding: 16px 28px;
+    border-top: 2px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  button.nav-btn {
+    background: #2E5C99;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    font-size: 17px;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+  button.nav-btn:hover:not(:disabled) {
+    background: #1e4273;
+    transform: translateY(-1px);
+  }
+  button.nav-btn:disabled {
+    background: #cbd5e1;
+    cursor: not-allowed;
+  }
+  .hint-keys {
+    font-size: 13px;
+    color: #94a3b8;
+  }
+</style>
+</head>
+<body>
+
+<div class="presentation-container">
+
+  <!-- Bovenbalk -->
+  <div class="top-bar">
+    <span>🤖 First Lego League — Les 1</span>
+    <div class="dots" id="dotsContainer"></div>
+    <span id="slideCounter">1 / 5</span>
+  </div>
+
+  <!-- SLIDE 1: WELKOM -->
+  <div class="slide active">
+    <div class="hero">
+      <div class="hero-emoji">🤖🧱🚀</div>
+      <h1>Welkom in het Robot-Lab!</h1>
+      <p class="lead">De komende 8 lessen gaan we bouwen, testen, lachen en coole dingen maken met LEGO en echte robots.</p>
+      <div class="hero-pills">
+        <span class="pill">✨ Geen saaie toetsen</span>
+        <span class="pill">🧱 Lekker veel bouwen</span>
+        <span class="pill">🎮 Samen lol maken</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: WAT GAAN WE DOEN? -->
+  <div class="slide">
+    <h2>🌟 Wat gaan we de komende weken doen?</h2>
+    <p class="lead">We maken samen onze eigen LEGO-wereld en brengen hem tot leven:</p>
+    <div class="grid-4">
+      <div class="info-card">
+        <div class="icon">🏰</div>
+        <div>
+          <h3>Eigen LEGO-wereld</h3>
+          <p>Bouw bruggen, tunnels, slagbomen en gekke obstakels voor op het grote speelveld.</p>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="icon">🤖</div>
+        <div>
+          <h3>Echte SPIKE-robots</h3>
+          <p>We hebben 2 SPIKE-robots én extra programmeerbare auto's om te besturen.</p>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="icon">🧠</div>
+        <div>
+          <h3>Sensoren & AI</h3>
+          <p>Laat je robot reageren op kleuren en knopjes — en ontdek wat je met AI kunt doen!</p>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="icon">🏆</div>
+        <div>
+          <h3>Uitdagingen & Wedstrijdjes</h3>
+          <p>Haalt jullie robot de route zonder te botsen? Testen, verbeteren en scoren!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: HOE WERKEN WE? -->
+  <div class="slide">
+    <h2>🔄 Hoe werken we elke les?</h2>
+    <p class="lead">We werken in kleine bouwteams en verdelen de groep over twee eilanden:</p>
+    <div class="islands-row">
+      <div class="island-box island-robot">
+        <div class="big-icon">🤖</div>
+        <h3>Team SPIKE-Robot</h3>
+        <p>Werkt met de 2 SPIKE-robots: bouwen, besturen, programmeren en sensoren testen.</p>
+      </div>
+      <div class="swap-badge">🔄<br>Wisselen!</div>
+      <div class="island-box island-build">
+        <div class="big-icon">🧱</div>
+        <h3>Team Bouwen & Parcours</h3>
+        <p>Bouwt met LEGO de obstakels, eigen voertuigen en het grote speelveld.</p>
+      </div>
+    </div>
+    <div class="note-banner">
+      ⏱️ <strong>Handig om te weten:</strong> Meestal wisselen we halverwege de les. Soms werkt een groep een hele les aan de robot en draaien we het de week erna om!
+    </div>
+  </div>
+
+  <!-- SLIDE 4: KAARTENSYSTEEM & PRIJS -->
+  <div class="slide">
+    <h2>🃏 Respect, Teamspirit & Prijzen!</h2>
+    <p class="lead">Als iemand praat, luisteren we naar elkaar. Zo houden we het gezellig en kun je punten verdienen:</p>
+    <div class="cards-grid">
+      <div class="game-card c-green">
+        <div class="card-emoji">🟩</div>
+        <h3>Groene Kaart</h3>
+        <p>Goed samenwerken en geconcentreerd bezig zijn = <strong>Pluspunten!</strong></p>
+      </div>
+      <div class="game-card c-purple">
+        <div class="card-emoji">🟪</div>
+        <h3>Paarse Kaart</h3>
+        <p>Superidee, extra creatief of een ander team helpen = <strong>Bonus!</strong></p>
+      </div>
+      <div class="game-card c-yellow">
+        <div class="card-emoji">🟨</div>
+        <h3>Gele Kaart</h3>
+        <p>Waarschuwing als je door de uitleg heen praat of stoort.</p>
+      </div>
+      <div class="game-card c-red">
+        <div class="card-emoji">🟥</div>
+        <h3>Rode Kaart</h3>
+        <p>Te ver gegaan? Even een korte pauze aan de kant.</p>
+      </div>
+    </div>
+    <div class="prize-banner">
+      <div class="trophy">🎁</div>
+      <div>
+        <strong>Win een prijs van € 10,-!</strong><br>
+        Elke week maken we een <strong>foto</strong> van jullie bouwwerk voor jullie teamscore. Het team met de beste inzet, samenwerking en bouwwerken wint aan het eind een <strong>Intertoys-cadeaukaart of Roblox-tegoed (€ 10,-)</strong>!
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: OPDRACHT VANDAAG -->
+  <div class="slide">
+    <h2>🧑‍🚀 Opdracht van vandaag: Bouw je Avatar!</h2>
+    <p class="lead">We beginnen meteen lekker met bouwen. Laat zien wie jij bent!</p>
+    <div class="avatar-box">
+      <ul>
+        <li><span class="kw">Wie ben jij?</span> Bouw van LEGO een poppetje of figuurtje dat op jou lijkt (jouw eigen <strong>Avatar</strong>).</li>
+        <li><span class="kw">Gebruik je fantasie:</span> Geef je avatar bijvoorbeeld jouw lievelingskleuren, een cool kapsel, een huisdier of iets wat bij jouw hobby past.</li>
+        <li><span class="kw">Teamwork:</span> Overleg in je subgroepje en deel de steentjes netjes met elkaar.</li>
+        <li><span class="kw">📸 Foto-moment:</span> Aan het eind maken we van elke avatar een foto — die telt meteen mee voor jullie score (en later doen we er iets gaafs mee met AI)!</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Navigatiebalk onderaan -->
+  <div class="nav-bar">
+    <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">⬅️ Vorige</button>
+    <span class="hint-keys">Tip: je kunt ook de pijltjestoetsen ◀ ▶ gebruiken</span>
+    <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Volgende ➡️</button>
+  </div>
+
+</div>
+
+<script>
+  let currentSlide = 0;
+  const slides = document.querySelectorAll('.slide');
+  const dotsContainer = document.getElementById('dotsContainer');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const slideCounter = document.getElementById('slideCounter');
+
+  // Maak navigatie-bolletjes aan
+  slides.forEach((_, index) => {
+    const dot = document.createElement('div');
+    dot.classList.add('dot');
+    if (index === 0) dot.classList.add('active');
+    dot.onclick = () => goToSlide(index);
+    dotsContainer.appendChild(dot);
+  });
+
+  const dots = document.querySelectorAll('.dot');
+
+  function updateUI() {
+    slides.forEach((slide, index) => {
+      slide.classList.toggle('active', index === currentSlide);
+    });
+    dots.forEach((dot, index) => {
+      dot.classList.toggle('active', index === currentSlide);
+    });
+    slideCounter.textContent = `${currentSlide + 1} / ${slides.length}`;
+    prevBtn.disabled = currentSlide === 0;
+    nextBtn.disabled = currentSlide === slides.length - 1;
+  }
+
+  function changeSlide(step) {
+    const target = currentSlide + step;
+    if (target >= 0 && target < slides.length) {
+      currentSlide = target;
+      updateUI();
+    }
+  }
+
+  function goToSlide(index) {
+    currentSlide = index;
+    updateUI();
+  }
+
+  // Pijltjestoetsen ondersteuning
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') {
+      changeSlide(1);
+    } else if (e.key === 'ArrowLeft') {
+      changeSlide(-1);
+    }
+  });
+
+  updateUI();
+</script>
+
+</body>
+</html>
