@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Les 3: De Uitdaging (LEGO + Papier) — First Lego League</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #eef2f7;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    color: #1e293b;
+  }
+  .box {
+    background: white;
+    padding: 30px 35px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    width: 100%;
+    max-width: 860px;
+  }
+  h1 {
+    color: #2E5C99;
+    margin: 0 0 6px 0;
+    font-size: 30px;
+  }
+  .subtitel {
+    color: #64748b;
+    font-size: 16px;
+    margin-bottom: 24px;
+  }
+  h2.sectie-titel {
+    font-size: 20px;
+    color: #1e293b;
+    margin: 26px 0 14px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Opdracht blok met bulletpoints */
+  .opdracht-box {
+    background: #eef4fc;
+    border-left: 6px solid #2E5C99;
+    padding: 18px 22px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+  .opdracht-box ul {
+    margin: 0;
+    padding-left: 20px;
+  }
+  .opdracht-box li {
+    font-size: 18px;
+    margin-bottom: 10px;
+    line-height: 1.4;
+  }
+  .opdracht-box li:last-child {
+    margin-bottom: 0;
+  }
+  .sleutelwoord {
+    font-weight: bold;
+    color: #2E5C99;
+  }
+
+  /* De Gouden Tip (Papier-truc) */
+  .tip-box {
+    background: #f8fafc;
+    border: 2px dashed #94a3b8;
+    border-radius: 12px;
+    padding: 14px 20px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  @media (max-width: 600px) {
+    .tip-box {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+  .tip-box svg {
+    width: 150px;
+    height: 75px;
+    flex-shrink: 0;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+  }
+  .tip-tekst h3 {
+    margin: 0 0 4px 0;
+    color: #2E5C99;
+    font-size: 17px;
+  }
+  .tip-tekst p {
+    margin: 0;
+    font-size: 15px;
+    color: #334155;
+    line-height: 1.4;
+  }
+
+  /* Grid voor de 6 voorbeelden */
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  @media (max-width: 650px) {
+    .grid-container {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  .card {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 12px;
+    text-align: center;
+    background: #fafafa;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .card svg {
+    width: 100%;
+    height: 95px;
+    border-radius: 8px;
+    background: #fff;
+    border: 1px solid #f1f5f9;
+  }
+  .card h3 {
+    margin: 10px 0 4px 0;
+    font-size: 17px;
+    color: #2E5C99;
+  }
+  .card p {
+    margin: 0;
+    font-size: 14px;
+    color: #475569;
+    font-weight: 500;
+  }
+
+  /* Beoordelingskader onderaan */
+  .beoordeling-box {
+    background: #fffbeb;
+    border: 2px solid #fcd34d;
+    border-radius: 12px;
+    padding: 18px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .beoordeling-header {
+    font-size: 19px;
+    font-weight: bold;
+    color: #b45309;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .beoordeling-box ul {
+    margin: 0;
+    padding-left: 20px;
+  }
+  .beoordeling-box li {
+    font-size: 16px;
+    margin-bottom: 6px;
+    color: #334155;
+  }
+  .beoordeling-box li:last-child {
+    margin-bottom: 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="box">
+
+  <h1>🚀 Les 3: De Uitdaging (LEGO + Papier)</h1>
+  <div class="subtitel">First Lego League — Slimme scharnieren en obstakels bouwen</div>
+
+  <!-- 1. DE OPDRACHT -->
+  <div class="opdracht-box">
+    <ul>
+      <li><span class="sleutelwoord">2 Uitdagingen:</span> Bouw minstens 2 objecten uit de 6 voorbeelden hieronder.</li>
+      <li><span class="sleutelwoord">Gebruik papier:</span> Klem een strookje papier tussen twee LEGO-blokjes om een <strong>scharnier, helling of veer</strong> te maken.</li>
+      <li><span class="sleutelwoord">Testen:</span> Test met jullie auto of alles blijft zitten en goed beweegt!</li>
+    </ul>
+  </div>
+
+  <!-- DE GOUDEN TIP -->
+  <div class="tip-box">
+    <svg viewBox="0 0 140 70">
+      <rect width="140" height="70" fill="#f8fafc"/>
+      <!-- Linker blokje -->
+      <rect x="15" y="25" width="35" height="22" fill="#e74c3c" rx="2"/>
+      <rect x="20" y="21" width="8" height="4" fill="#c0392b"/>
+      <rect x="36" y="21" width="8" height="4" fill="#c0392b"/>
+      <!-- Strookje papier ertussen -->
+      <rect x="42" y="34" width="56" height="4" fill="#facc15" stroke="#ca8a04" stroke-width="1"/>
+      <!-- Rechter blokje -->
+      <rect x="90" y="25" width="35" height="22" fill="#3b82f6" rx="2"/>
+      <rect x="95" y="21" width="8" height="4" fill="#2563eb"/>
+      <rect x="111" y="21" width="8" height="4" fill="#2563eb"/>
+    </svg>
+    <div class="tip-tekst">
+      <h3>💡 De Papier-Truc (Geel op de plaatjes = Papier!)</h3>
+      <p>Klem een stukje papier tussen twee LEGO-steentjes vast. Zo maak je zelf iets dat kan <strong>buigen, kantelen of veren</strong> zonder dat het loslaat!</p>
+    </div>
+  </div>
+
+  <!-- 2. VOORBEELDEN -->
+  <h2 class="sectie-titel">🛠️ Kies uit deze 6 uitdagingen:</h2>
+  <div class="grid-container">
+    
+    <!-- 1. De Slagboom -->
+    <div class="card">
+      <svg viewBox="0 0 100 80">
+        <rect width="100" height="80" fill="#f8fafc"/>
+        <!-- Paal -->
+        <rect x="20" y="32" width="16" height="38" fill="#334155"/>
+        <!-- Papieren scharnier -->
+        <rect x="33" y="38" width="12" height="5" fill="#facc15" stroke="#ca8a04" stroke-width="1"/>
+        <!-- Boom -->
+        <rect x="43" y="35" width="42" height="9" fill="#e74c3c" transform="rotate(-12 43 35)"/>
+      </svg>
+      <h3>1. De Slagboom</h3>
+      <p>Open duwen met scharnier</p>
+    </div>
+
+    <!-- 2. De Wip-Wap -->
+    <div class="card">
+      <svg viewBox="0 0 100 80">
+        <rect width="100" height="80" fill="#f8fafc"/>
+        <!-- Voet -->
+        <rect x="42" y="48" width="16" height="22" fill="#475569"/>
+        <!-- Papieren verbinding in het midden -->
+        <rect x="40" y="44" width="20" height="4" fill="#facc15" stroke="#ca8a04" stroke-width="1"/>
+        <!-- Wipplank -->
+        <rect x="14" y="40" width="72" height="7" fill="#f97316" transform="rotate(10 50 43)"/>
+      </svg>
+      <h3>2. De Wip-Wap</h3>
+      <p>Kantelen zonder afschuiven</p>
+    </div>
+
+    <!-- 3. Het Vlaggetje -->
+    <div class="card">
+      <svg viewBox="0 0 100 80">
+        <rect width="100" height="80" fill="#f8fafc"/>
+        <!-- Voet -->
+        <rect x="22" y="60" width="28" height="10" fill="#334155"/>
+        <!-- Papieren scharnier onderaan -->
+        <rect x="33" y="54" width="6" height="8" fill="#facc15" stroke="#ca8a04" stroke-width="1"/>
+        <!-- Mast + Vlag -->
+        <rect x="33" y="18" width="6" height="37" fill="#64748b"/>
+        <polygon points="39,18 72,27 39,36" fill="#e74c3c"/>
+      </svg>
+      <h3>3. Het Vlaggetje</h3>
+      <p>Omklappen bij aanraken</p>
+    </div>
+
+    <!-- 4. De Schans -->
+    <div class="card">
+      <svg viewBox="0 0 100 80">
+        <rect width="100" height="80" fill="#f8fafc"/>
+        <!-- Hoge blokken rechts -->
+        <rect x="68" y="32" width="18" height="38" fill="#22c55e"/>
+        <!-- Steunblok links -->
+        <rect x="14" y="62" width="16" height="8" fill="#22c55e"/>
+        <!-- Papieren hellingbaan -->
+        <line x1="22" y1="63" x2="76" y2="33" stroke="#facc15" stroke-width="5"/>
+        <line x1="22" y1="63" x2="76" y2="33" stroke="#ca8a04" stroke-width="1"/>
+      </svg>
+      <h3>4. De Schans</h3>
+      <p>Gladde helling van papier</p>
+    </div>
+
+    <!-- 5. De Drukknop -->
+    <div class="card">
+      <svg viewBox="0 0 100 80">
+        <rect width="100" height="80" fill="#f8fafc"/>
+        <!-- Achtermuur -->
+        <rect x="65" y="25" width="16" height="45" fill="#475569"/>
+        <!-- Papieren harmonica-veer -->
+        <polyline points="65,42 56,37 56,47 47,37 47,47 38,42" fill="none" stroke="#ca8a04" stroke-width="3"/>
+        <!-- Rode knop -->
+        <rect x="24" y="34" width="14" height="18" fill="#dc2626" rx="2"/>
+      </svg>
+      <h3>5. De Drukknop</h3>
+      <p>Indrukken met papieren veer</p>
+    </div>
+
+    <!-- 6. De Tunnel -->
+    <div class="card">
+      <svg viewBox="0 0 100 80">
+        <rect width="100" height="80" fill="#f8fafc"/>
+        <!-- Tunnel boog -->
+        <rect x="18" y="20" width="14" height="50" fill="#0d9488"/>
+        <rect x="68" y="20" width="14" height="50" fill="#0d9488"/>
+        <rect x="18" y="20" width="64" height="12" fill="#0f766e"/>
+        <!-- Papieren klapdeurtjes -->
+        <rect x="34" y="32" width="14" height="32" fill="#facc15" stroke="#ca8a04" stroke-width="1"/>
+        <rect x="52" y="32" width="14" height="32" fill="#facc15" stroke="#ca8a04" stroke-width="1"/>
+      </svg>
+      <h3>6. De Tunnel</h3>
+      <p>Door papieren deurtjes rijden</p>
+    </div>
+
+  </div>
+
+  <!-- 3. BEOORDELING & FOTO -->
+  <div class="beoordeling-box">
+    <div class="beoordeling-header">📸 Einde van de les: Foto & Cijfer!</div>
+    <ul>
+      <li>Aan het eind maken we een <strong>foto</strong> van jullie bouwwerken.</li>
+      <li>Jullie krijgen vandaag een <strong>cijfer</strong> voor: <strong>samenwerken</strong>, <strong>concentratie</strong> en <strong>slimme oplossingen</strong>.</li>
+    </ul>
+  </div>
+
+</div>
+
+</body>
+</html>
