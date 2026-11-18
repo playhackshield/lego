@@ -1,0 +1,23 @@
+{
+    "ratio": 95,
+    "iframes": [
+        { 
+            "id": 3, 
+            "title": "WeDo scripts", 
+            "url": "https://playhackshield.github.io/lego/assets/scripter/wedo.html" 
+        },        
+        { 
+            "id": 4, 
+            "title": "SPIKE scripts", 
+            "url": "https://playhackshield.github.io/lego/assets/scripter/spike.html" 
+        }
+    ],
+    "playlist" : [
+        {
+            "title": "Intro",
+            "type": "video",
+            "src": "assets/cyberpesten/cyberpesten.mp4",
+            "loop": false
+        }
+    ]
+}
