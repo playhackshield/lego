@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LEGO SPIKE Python Scripts Beheer</title>
+  <style>
+    :root {
+      --spike-purple: #6A1B9A;
+      --spike-yellow: #FFD54F;
+      --spike-green: #2E7D32;
+      --spike-red: #C62828;
+      --bg-color: #F3E5F5;
+      --card-bg: #FFFFFF;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      color: #222;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      max-width: 800px;
+      width: 100%;
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 10px 25px rgba(106, 27, 154, 0.15);
+      border: 4px solid var(--spike-purple);
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      border-bottom: 3px dashed #E1BEE7;
+      padding-bottom: 20px;
+      margin-bottom: 25px;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--spike-purple);
+      font-size: 1.8rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .step-box {
+      background: #FAFAFA;
+      border: 2px solid #E1BEE7;
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .step-title {
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: var(--spike-purple);
+      margin-top: 0;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge {
+      background: var(--spike-yellow);
+      color: #000;
+      font-weight: 800;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+    }
+
+    button {
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: bold;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.1s, filter 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-purple { background: var(--spike-purple); color: white; }
+    .btn-green { background: var(--spike-green); color: white; }
+    .btn-red { background: var(--spike-red); color: white; }
+    .btn-yellow { background: var(--spike-yellow); color: #222; }
+    .btn-gray { background: #E2E8F0; color: #334155; }
+
+    select, input[type="text"], input[type="email"], input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
+      border: 2px solid #CBD5E1;
+      border-radius: 10px;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+      font-family: inherit;
+    }
+
+    textarea {
+      width: 100%;
+      height: 280px;
+      padding: 15px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.95rem;
+      background: #1E293B;
+      color: #F8FAFC;
+      border: 2px solid #334155;
+      border-radius: 12px;
+      box-sizing: border-box;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    textarea:read-only {
+      background: #334155;
+      color: #CBD5E1;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .admin-panel {
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 2px dashed #CBD5E1;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .helper-text {
+      font-size: 0.85rem;
+      color: #475569;
+      margin-top: 6px;
+    }
+
+    .copy-notification {
+      background: #DCFCE7;
+      color: #166534;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-weight: bold;
+      display: inline-block;
+      margin-top: 10px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .copy-notification.show {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>🐍 SPIKE Python Script Bibliotheek</h1>
+    <div>
+      <button id="toggleAdminLoginBtn" class="btn-gray" style="font-size: 0.85rem; padding: 8px 12px;">🔒 Docent Login</button>
+      <button id="logoutBtn" class="btn-red hidden" style="font-size: 0.85rem; padding: 8px 12px;">Uitloggen (Admin)</button>
+    </div>
+  </header>
+
+  <!-- Admin Login Formulier -->
+  <div id="adminLoginBox" class="step-box hidden" style="border-color: var(--spike-yellow); background: #FFFBEB;">
+    <h3 class="step-title">🔑 Inloggen als Docent / Admin</h3>
+    <input type="email" id="adminEmail" placeholder="Admin e-mailadres">
+    <input type="password" id="adminPassword" placeholder="Wachtwoord">
+    <div class="button-row">
+      <button id="loginSubmitBtn" class="btn-purple">Inloggen</button>
+      <button id="cancelLoginBtn" class="btn-gray">Annuleren</button>
+    </div>
+    <p id="loginError" style="color: var(--spike-red); font-weight: bold; margin-bottom: 0;"></p>
+  </div>
+
+  <!-- STAP 1: Kies een Python Script -->
+  <div class="step-box">
+    <h2 class="step-title"><span class="badge">1</span> Kies een SPIKE Python script</h2>
+    <select id="scriptSelect">
+      <option value="">-- Laden van scripts... --</option>
+    </select>
+
+    <!-- Alleen zichtbaar voor Admin -->
+    <div id="adminTitleGroup" class="hidden" style="margin-top: 10px;">
+      <label for="scriptTitleInput" style="font-weight: bold; display: block; margin-bottom: 5px;">Naam van het script:</label>
+      <input type="text" id="scriptTitleInput" placeholder="Bijv. Basis Rijden &amp; Stoppen">
+    </div>
+  </div>
+
+  <!-- STAP 2: Code bekijken en kopiëren -->
+  <div class="step-box">
+    <h2 class="step-title"><span class="badge">2</span> Python Code Kopieren</h2>
+    <textarea id="codeEditor" readonly placeholder="Kies hierboven een script om de code te bekijken..."></textarea>
+    <p class="helper-text">💡 Plak deze code direct in de officiële LEGO SPIKE App onder het Python tabblad.</p>
+
+    <div class="button-row">
+      <button id="copyBtn" class="btn-green">📋 Kopieer naar klembord</button>
+    </div>
+    <span id="copyFeedback" class="copy-notification">Naar klembord gekopieerd! Plak het in SPIKE 🚀</span>
+
+    <!-- CRUD Knoppen (Alleen zichtbaar als Admin is ingelogd) -->
+    <div id="crudControls" class="admin-panel hidden">
+      <h3 class="step-title" style="color: #334155;">🛠️ Beheer (Admin)</h3>
+      <div class="button-row">
+        <button id="newScriptBtn" class="btn-yellow">➕ Nieuw Script</button>
+        <button id="saveScriptBtn" class="btn-purple">💾 Opslaan</button>
+        <button id="deleteScriptBtn" class="btn-red">🗑️ Verwijderen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase SDK's (Compat versie) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
+<!-- Jouw eigen Firebase configuratie uit dezelfde map -->
+<script src="firebase-config.js"></script>
+
+<script>
+  // ==========================================
+  // 1. KOPIEER FUNCTIONALITEIT
+  // ==========================================
+  const copyBtn = document.getElementById('copyBtn');
+  const codeEditor = document.getElementById('codeEditor');
+  const copyFeedback = document.getElementById('copyFeedback');
+
+  copyBtn.addEventListener('click', async () => {
+    if (!codeEditor.value.trim()) {
+      alert('Er is geen code om te kopiëren!');
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(codeEditor.value);
+      copyFeedback.classList.add('show');
+      setTimeout(() => {
+        copyFeedback.classList.remove('show');
+      }, 2500);
+    } catch (err) {
+      // Fallback voor oudere browsers/omgevingen
+      codeEditor.select();
+      document.execCommand('copy');
+      copyFeedback.classList.add('show');
+      setTimeout(() => {
+        copyFeedback.classList.remove('show');
+      }, 2500);
+    }
+  });
+
+  // ==========================================
+  // 2. FIREBASE FIRESTORE CRUD & AUTH (spike_scripts)
+  // ==========================================
+  const scriptsCollection = db.collection('spike_scripts');
+  let allScripts = [];
+  let currentScriptId = null;
+  let isAdmin = false;
+
+  const scriptSelect = document.getElementById('scriptSelect');
+  const scriptTitleInput = document.getElementById('scriptTitleInput');
+  const adminTitleGroup = document.getElementById('adminTitleGroup');
+  const crudControls = document.getElementById('crudControls');
+
+  // Standaard Spike Python voorbeeldcode als de database nog leeg is
+  const defaultPythonExample = `from spike import PrimeHub, Motor, LightMatrix, Button, StatusLight, ForceSensor, MotionSensor, Speaker, ColorSensor, App
+from spike.control import wait_for_seconds, wait_until, Timer
+math = __import__('math')
+
+hub = PrimeHub()
+
+# Zet de lichtmatrix aan met een vrolijke smiley
+hub.light_matrix.show_image('HAPPY')
+
+# Laat motor op poort A vooruit draaien
+motor_a = Motor('A')
+motor_a.run_for_degrees(360, 50)
+`;
+
+  // Luister realtime naar de 'spike_scripts' collectie
+  scriptsCollection.orderBy('title').onSnapshot((snapshot) => {
+    allScripts = [];
+    snapshot.forEach((doc) => {
+      allScripts.push({ id: doc.id, ...doc.data() });
+    });
+
+    renderDropdown();
+  }, (error) => {
+    console.error('Fout bij ophalen SPIKE scripts:', error);
+    scriptSelect.innerHTML = '<option value="">Fout bij laden van scripts</option>';
+  });
+
+  function renderDropdown() {
+    const previousSelection = currentScriptId;
+    scriptSelect.innerHTML = '';
+
+    if (allScripts.length === 0) {
+      const opt = document.createElement('option');
+      opt.value = '';
+      opt.textContent = '-- Nog geen SPIKE scripts gevonden --';
+      scriptSelect.appendChild(opt);
+      if (!isAdmin) {
+        codeEditor.value = defaultPythonExample;
+      }
+      return;
+    }
+
+    allScripts.forEach((script) => {
+      const opt = document.createElement('option');
+      opt.value = script.id;
+      opt.textContent = script.title;
+      scriptSelect.appendChild(opt);
+    });
+
+    if (previousSelection && allScripts.some(s => s.id === previousSelection)) {
+      scriptSelect.value = previousSelection;
+    } else {
+      scriptSelect.value = allScripts[0].id;
+    }
+    loadSelectedScript();
+  }
+
+  function loadSelectedScript() {
+    const selectedId = scriptSelect.value;
+    currentScriptId = selectedId || null;
+
+    const script = allScripts.find(s => s.id === selectedId);
+    if (script) {
+      scriptTitleInput.value = script.title;
+      codeEditor.value = script.code;
+    } else {
+      scriptTitleInput.value = '';
+      codeEditor.value = '';
+    }
+  }
+
+  scriptSelect.addEventListener('change', loadSelectedScript);
+
+  // --- CRUD ACTIES (ALLEEN ADMIN) ---
+
+  document.getElementById('newScriptBtn').addEventListener('click', () => {
+    currentScriptId = null;
+    scriptSelect.value = '';
+    scriptTitleInput.value = 'Nieuw SPIKE Script';
+    codeEditor.value = defaultPythonExample;
+    scriptTitleInput.focus();
+  });
+
+  document.getElementById('saveScriptBtn').addEventListener('click', async () => {
+    const title = scriptTitleInput.value.trim();
+    const code = codeEditor.value;
+
+    if (!title) {
+      alert('Geef het script eerst een duidelijke naam!');
+      return;
+    }
+
+    try {
+      if (currentScriptId) {
+        await scriptsCollection.doc(currentScriptId).update({
+          title: title,
+          code: code,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        alert('SPIKE script succesvol bijgewerkt! ✅');
+      } else {
+        const docRef = await scriptsCollection.add({
+          title: title,
+          code: code,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        currentScriptId = docRef.id;
+        alert('Nieuw SPIKE script opgeslagen! 🎉');
+      }
+    } catch (error) {
+      alert('Opslaan mislukt (ben je wel ingelogd als admin?):\n' + error.message);
+    }
+  });
+
+  document.getElementById('deleteScriptBtn').addEventListener('click', async () => {
+    if (!currentScriptId) {
+      alert('Kies eerst een opgeslagen script om te verwijderen.');
+      return;
+    }
+
+    const confirmDelete = confirm(`Weet je zeker dat je "${scriptTitleInput.value}" wilt verwijderen?`);
+    if (!confirmDelete) return;
+
+    try {
+      await scriptsCollection.doc(currentScriptId).delete();
+      currentScriptId = null;
+      alert('Script verwijderd! 🗑️');
+    } catch (error) {
+      alert('Verwijderen mislukt:\n' + error.message);
+    }
+  });
+
+  // --- AUTHENTICATIE UI LOGICA ---
+  const toggleAdminLoginBtn = document.getElementById('toggleAdminLoginBtn');
+  const adminLoginBox = document.getElementById('adminLoginBox');
+  const logoutBtn = document.getElementById('logoutBtn');
+  const loginError = document.getElementById('loginError');
+
+  toggleAdminLoginBtn.addEventListener('click', () => {
+    adminLoginBox.classList.toggle('hidden');
+    loginError.innerText = '';
+  });
+
+  document.getElementById('cancelLoginBtn').addEventListener('click', () => {
+    adminLoginBox.classList.add('hidden');
+  });
+
+  document.getElementById('loginSubmitBtn').addEventListener('click', async () => {
+    const email = document.getElementById('adminEmail').value;
+    const password = document.getElementById('adminPassword').value;
+    loginError.innerText = '';
+
+    try {
+      await auth.signInWithEmailAndPassword(email, password);
+      adminLoginBox.classList.add('hidden');
+    } catch (err) {
+      loginError.innerText = 'Inloggen mislukt: ' + err.message;
+    }
+  });
+
+  logoutBtn.addEventListener('click', () => {
+    auth.signOut();
+  });
+
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      isAdmin = true;
+      toggleAdminLoginBtn.classList.add('hidden');
+      logoutBtn.classList.remove('hidden');
+      adminTitleGroup.classList.remove('hidden');
+      crudControls.classList.remove('hidden');
+      codeEditor.readOnly = false;
+    } else {
+      isAdmin = false;
+      toggleAdminLoginBtn.classList.remove('hidden');
+      logoutBtn.classList.add('hidden');
+      adminTitleGroup.classList.add('hidden');
+      crudControls.classList.add('hidden');
+      codeEditor.readOnly = true;
+    }
+  });
+</script>
+
+</body>
+</html>
