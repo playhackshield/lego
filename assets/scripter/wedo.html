@@ -276,13 +276,14 @@
 
 <script>
   // ==========================================
-  // BLUETOOTH VERBINDING (HET ENIGE WAT DE PAGINA DOET)
+  // BLUETOOTH VERBINDING & UUID'S
   // ==========================================
   const SERVICE_UUID = '00004f0e-1212-efde-1523-785feabcd123';
   const OUTPUT_CHAR_UUID = '00001565-1212-efde-1523-785feabcd123';
+  const INPUT_CHAR_UUID = '00001560-1212-efde-1523-785feabcd123'; // Voor sensoren
   
-  // Maak de verbinding globaal beschikbaar zodat scripts erbij kunnen
   window.wedoOutputChar = null;
+  window.wedoInputChar = null;
 
   const btStatusEl = document.getElementById('btStatus');
   const connectBtn = document.getElementById('connectBtn');
@@ -299,13 +300,17 @@
 
       device.addEventListener('gattserverdisconnected', () => {
         window.wedoOutputChar = null;
+        window.wedoInputChar = null;
         btStatusEl.innerText = 'Status: Verbinding verbroken';
         btStatusEl.className = 'status-pill';
       });
 
       const server = await device.gatt.connect();
       const service = await server.getPrimaryService(SERVICE_UUID);
+      
+      // Haal zowel motoren als sensoren op!
       window.wedoOutputChar = await service.getCharacteristic(OUTPUT_CHAR_UUID);
+      window.wedoInputChar = await service.getCharacteristic(INPUT_CHAR_UUID);
 
       btStatusEl.innerText = 'Status: Verbonden met ' + (device.name || 'WeDo Hub') + ' ✅';
       btStatusEl.className = 'status-pill status-connected';
@@ -360,8 +365,10 @@
     };
 
     try {
+      // Geef zowel wedoOutputChar als wedoInputChar mee aan het script!
       const runFn = new Function(
-        'wedoOutputChar', // <--- Hier meegegeven als parameter!
+        'wedoOutputChar',
+        'wedoInputChar',
         'window',
         'document',
         'setInterval',
@@ -369,13 +376,19 @@
         userCode
       );
 
-      // <--- En hier meegegeven als waarde:
-      runFn(window.wedoOutputChar, sandboxWindow, sandboxWindow, sandboxSetInterval, sandboxSetTimeout);
+      runFn(
+        window.wedoOutputChar,
+        window.wedoInputChar,
+        sandboxWindow, 
+        sandboxWindow, 
+        sandboxSetInterval, 
+        sandboxSetTimeout
+      );
 
       isScriptRunning = true;
       runScriptBtn.disabled = true;
       stopScriptBtn.disabled = false;
-      scriptStatusEl.innerText = '🚀 Script is actief! Gebruik je toetsenbord.';
+      scriptStatusEl.innerText = '🚀 Script is actief!';
       scriptStatusEl.className = 'status-pill status-running';
     } catch (err) {
       alert('Oeps! Er zit een foutje in de code:\n' + err.message);
@@ -394,9 +407,8 @@
     activeTimeouts.forEach(id => clearTimeout(id));
     activeTimeouts = [];
 
-    // Probeer motoren direct stil te zetten als de functie bestaat in het script
     try {
-      if (typeof setMotors === 'function') {
+      if (typeof setMotors === 'function' && window.wedoOutputChar) {
         setMotors(0, 0);
       }
     } catch (e) {}
@@ -424,37 +436,30 @@
   const adminTitleGroup = document.getElementById('adminTitleGroup');
   const crudControls = document.getElementById('crudControls');
 
-  // Transparant voorbeeldscript met de setMotors functie netjes in het zicht
-  const defaultTransparentExample = `// 1. ZELFGESCHREVEN FUNCTIE OM MOTOREN AAN TE STUREN
-// Hier zie je precies hoe de computer bytes naar de hub stuurt via Bluetooth!
+  const defaultTransparentExample = `// Voorbeeld: Motor besturen met toetsenbord
 async function setMotors(speedA, speedB) {
-  if (!window.wedoOutputChar) {
+  if (!wedoOutputChar) {
     console.log("Verbind eerst met de WeDo Hub!");
     return;
   }
-  
-  // Byte-opbouw WeDo 2.0: [poort, commando, lengte, snelheid]
   const cmdA = new Uint8Array([0x01, 0x01, 0x01, speedA & 0xFF]);
   const cmdB = new Uint8Array([0x02, 0x01, 0x01, speedB & 0xFF]);
-  
-  await window.wedoOutputChar.writeValue(cmdA);
-  await window.wedoOutputChar.writeValue(cmdB);
+  await wedoOutputChar.writeValue(cmdA);
+  await wedoOutputChar.writeValue(cmdB);
 }
 
-// 2. BESTURING MET HET TOETSBORD
 let isDriving = false;
-
 window.addEventListener('keydown', (event) => {
   if (event.key === 'ArrowUp' && !isDriving) {
     isDriving = true;
-    setMotors(80, 80); // Beide motoren volle kracht vooruit!
+    setMotors(80, 80);
   }
 });
 
 window.addEventListener('keyup', (event) => {
   if (event.key === 'ArrowUp') {
     isDriving = false;
-    setMotors(0, 0); // Stoppen
+    setMotors(0, 0);
   }
 });`;
 
@@ -521,7 +526,7 @@ window.addEventListener('keyup', (event) => {
     if (isScriptRunning) stopUserScript();
     currentScriptId = null;
     scriptSelect.value = '';
-    scriptTitleInput.value = 'Nieuw transparant script';
+    scriptTitleInput.value = 'Nieuw script';
     codeEditor.value = defaultTransparentExample;
     scriptTitleInput.focus();
   });
