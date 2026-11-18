@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LEGO WeDo 2.0 Robot Besturing</title>
+  <style>
+    :root {
+      --lego-blue: #006CB7;
+      --lego-green: #00A850;
+      --lego-red: #E3000B;
+      --lego-yellow: #FFCF00;
+      --bg-color: #F0F7FF;
+      --card-bg: #FFFFFF;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      color: #222;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      max-width: 800px;
+      width: 100%;
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 10px 25px rgba(0, 108, 183, 0.15);
+      border: 4px solid var(--lego-blue);
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      border-bottom: 3px dashed #D0E4F7;
+      padding-bottom: 20px;
+      margin-bottom: 25px;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--lego-blue);
+      font-size: 1.8rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .step-box {
+      background: #F8FBFF;
+      border: 2px solid #D0E4F7;
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .step-title {
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: var(--lego-blue);
+      margin-top: 0;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge {
+      background: var(--lego-yellow);
+      color: #000;
+      font-weight: 800;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+    }
+
+    button {
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: bold;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.1s, filter 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-blue { background: var(--lego-blue); color: white; }
+    .btn-green { background: var(--lego-green); color: white; }
+    .btn-red { background: var(--lego-red); color: white; }
+    .btn-yellow { background: var(--lego-yellow); color: #222; }
+    .btn-gray { background: #E2E8F0; color: #334155; }
+
+    .status-pill {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 0.95rem;
+      background: #E2E8F0;
+      color: #334155;
+    }
+
+    .status-connected {
+      background: #DCFCE7;
+      color: #166534;
+    }
+
+    .status-running {
+      background: #FEF08A;
+      color: #854D0E;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.7; }
+      100% { opacity: 1; }
+    }
+
+    select, input[type="text"], input[type="email"], input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
+      border: 2px solid #CBD5E1;
+      border-radius: 10px;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+      font-family: inherit;
+    }
+
+    textarea {
+      width: 100%;
+      height: 220px;
+      padding: 15px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.95rem;
+      background: #1E293B;
+      color: #F8FAFC;
+      border: 2px solid #334155;
+      border-radius: 12px;
+      box-sizing: border-box;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    textarea:read-only {
+      background: #334155;
+      color: #CBD5E1;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .admin-panel {
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 2px dashed #CBD5E1;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .helper-text {
+      font-size: 0.85rem;
+      color: #475569;
+      margin-top: 6px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>🤖 WeDo 2.0 Robot Lab</h1>
+    <div>
+      <button id="toggleAdminLoginBtn" class="btn-gray" style="font-size: 0.85rem; padding: 8px 12px;">🔒 Docent Login</button>
+      <button id="logoutBtn" class="btn-red hidden" style="font-size: 0.85rem; padding: 8px 12px;">Uitloggen (Admin)</button>
+    </div>
+  </header>
+
+  <!-- Admin Login Formulier (verborgen totdat op Docent Login wordt geklikt) -->
+  <div id="adminLoginBox" class="step-box hidden" style="border-color: var(--lego-yellow); background: #FFFBEB;">
+    <h3 class="step-title">🔑 Inloggen als Docent / Admin</h3>
+    <input type="email" id="adminEmail" placeholder="Admin e-mailadres">
+    <input type="password" id="adminPassword" placeholder="Wachtwoord">
+    <div class="button-row">
+      <button id="loginSubmitBtn" class="btn-blue">Inloggen</button>
+      <button id="cancelLoginBtn" class="btn-gray">Annuleren</button>
+    </div>
+    <p id="loginError" style="color: var(--lego-red); font-weight: bold; margin-bottom: 0;"></p>
+  </div>
+
+  <!-- STAP 1: Bluetooth Verbinding -->
+  <div class="step-box">
+    <h2 class="step-title"><span class="badge">1</span> Verbind je WeDo 2.0 Hub</h2>
+    <button id="connectBtn" class="btn-blue">🔵 Verbind met WeDo Hub</button>
+    <br>
+    <span id="btStatus" class="status-pill">Status: Niet verbonden</span>
+  </div>
+
+  <!-- STAP 2: Kies een Script -->
+  <div class="step-box">
+    <h2 class="step-title"><span class="badge">2</span> Kies een programma</h2>
+    <select id="scriptSelect">
+      <option value="">-- Laden van scripts... --</option>
+    </select>
+
+    <!-- Alleen zichtbaar voor Admin: Titel aanpassen voor Create/Update -->
+    <div id="adminTitleGroup" class="hidden" style="margin-top: 10px;">
+      <label for="scriptTitleInput" style="font-weight: bold; display: block; margin-bottom: 5px;">Naam van het script:</label>
+      <input type="text" id="scriptTitleInput" placeholder="Bijv. Rijden met pijltjestoetsen">
+    </div>
+  </div>
+
+  <!-- STAP 3: Code & Uitvoeren -->
+  <div class="step-box">
+    <h2 class="step-title"><span class="badge">3</span> Robot Code & Besturing</h2>
+    <textarea id="codeEditor" readonly placeholder="Kies hierboven een script om de code te bekijken..."></textarea>
+    <p class="helper-text">💡 Tip: In de code kun je <code>setMotors(snelheidA, snelheidB)</code> gebruiken (van -100 tot 100).</p>
+
+    <div class="button-row">
+      <button id="runScriptBtn" class="btn-green">▶️ Start Script</button>
+      <button id="stopScriptBtn" class="btn-red" disabled>⏹️ Stop Script</button>
+    </div>
+    <span id="scriptStatus" class="status-pill">Script staat stil</span>
+
+    <!-- CRUD Knoppen (Alleen zichtbaar als Admin is ingelogd) -->
+    <div id="crudControls" class="admin-panel hidden">
+      <h3 class="step-title" style="color: #334155;">🛠️ Beheer (Admin)</h3>
+      <div class="button-row">
+        <button id="newScriptBtn" class="btn-yellow">➕ Nieuw Script</button>
+        <button id="saveScriptBtn" class="btn-blue">💾 Opslaan</button>
+        <button id="deleteScriptBtn" class="btn-red">🗑️ Verwijderen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase SDK's (Compat versie passend bij jouw firebase-config.js) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
+<!-- Jouw eigen Firebase configuratie -->
+<script src="firebase-config.js"></script>
+
+<script>
+  // ==========================================
+  // 1. LEGO WEDO 2.0 BLUETOOTH LOGICA
+  // ==========================================
+  const SERVICE_UUID = '00004f0e-1212-efde-1523-785feabcd123';
+  const OUTPUT_CHAR_UUID = '00001565-1212-efde-1523-785feabcd123';
+  let outputChar = null;
+
+  const btStatusEl = document.getElementById('btStatus');
+  const connectBtn = document.getElementById('connectBtn');
+
+  connectBtn.addEventListener('click', async () => {
+    try {
+      btStatusEl.innerText = 'Status: Zoeken naar hub... (Druk op de groene knop op je WeDo)';
+      btStatusEl.className = 'status-pill';
+
+      const device = await navigator.bluetooth.requestDevice({
+        filters: [{ namePrefix: 'LPF2' }],
+        optionalServices: [SERVICE_UUID, '00001523-1212-efde-1523-785feabcd123']
+      });
+
+      device.addEventListener('gattserverdisconnected', () => {
+        outputChar = null;
+        btStatusEl.innerText = 'Status: Verbinding verbroken';
+        btStatusEl.className = 'status-pill';
+      });
+
+      const server = await device.gatt.connect();
+      const service = await server.getPrimaryService(SERVICE_UUID);
+      outputChar = await service.getCharacteristic(OUTPUT_CHAR_UUID);
+
+      btStatusEl.innerText = 'Status: Verbonden met ' + (device.name || 'WeDo Hub') + ' ✅';
+      btStatusEl.className = 'status-pill status-connected';
+    } catch (error) {
+      btStatusEl.innerText = 'Fout bij verbinden: ' + error.message;
+      btStatusEl.className = 'status-pill';
+    }
+  });
+
+  // Algemene functie die vanuit alle kinderscripts aangeroepen kan worden
+  async function setMotors(speedA, speedB) {
+    if (!outputChar) {
+      console.log(`[Simulatie - niet verbonden] Motor A: ${speedA}, Motor B: ${speedB}`);
+      return;
+    }
+    try {
+      const cmdA = new Uint8Array([0x01, 0x01, 0x01, speedA]);
+      const cmdB = new Uint8Array([0x02, 0x01, 0x01, speedB]);
+      await outputChar.writeValue(cmdA);
+      await outputChar.writeValue(cmdB);
+    } catch (err) {
+      console.error('Fout bij aansturen motoren:', err);
+    }
+  }
+
+  // ==========================================
+  // 2. VEILIGE SCRIPT UITVOERDER (START / STOP)
+  // ==========================================
+  let activeListeners = [];
+  let activeIntervals = [];
+  let activeTimeouts = [];
+  let isScriptRunning = false;
+
+  const runScriptBtn = document.getElementById('runScriptBtn');
+  const stopScriptBtn = document.getElementById('stopScriptBtn');
+  const scriptStatusEl = document.getElementById('scriptStatus');
+  const codeEditor = document.getElementById('codeEditor');
+
+  function startUserScript() {
+    stopUserScript(); // Eerst eventueel vorig script netjes opruimen
+
+    const userCode = codeEditor.value;
+    if (!userCode.trim()) {
+      alert('Er staat geen code om uit te voeren!');
+      return;
+    }
+
+    // We maken een veilige wrapper rondom window.addEventListener, setInterval en setTimeout
+    // zodat we alles kunnen stoppen zodra het kind op 'Stop Script' klikt.
+    const sandboxWindow = {
+      addEventListener: (type, listener, options) => {
+        window.addEventListener(type, listener, options);
+        activeListeners.push({ type, listener, options });
+      },
+      removeEventListener: (type, listener, options) => {
+        window.removeEventListener(type, listener, options);
+      }
+    };
+
+    const sandboxSetInterval = (fn, delay) => {
+      const id = setInterval(fn, delay);
+      activeIntervals.push(id);
+      return id;
+    };
+
+    const sandboxSetTimeout = (fn, delay) => {
+      const id = setTimeout(fn, delay);
+      activeTimeouts.push(id);
+      return id;
+    };
+
+    try {
+      // Maak een functie met de userCode en geef setMotors en de opruim-wrappers mee
+      const runFn = new Function(
+        'setMotors',
+        'window',
+        'document',
+        'setInterval',
+        'setTimeout',
+        userCode
+      );
+
+      runFn(setMotors, sandboxWindow, sandboxWindow, sandboxSetInterval, sandboxSetTimeout);
+
+      isScriptRunning = true;
+      runScriptBtn.disabled = true;
+      stopScriptBtn.disabled = false;
+      scriptStatusEl.innerText = '🚀 Script is actief! Gebruik je toetsenbord of wacht op de robot.';
+      scriptStatusEl.className = 'status-pill status-running';
+    } catch (err) {
+      alert('Oeps! Er zit een foutje in de code:\n' + err.message);
+      stopUserScript();
+    }
+  }
+
+  function stopUserScript() {
+    // 1. Verwijder alle event listeners (zoals keydown / keyup)
+    activeListeners.forEach(({ type, listener, options }) => {
+      window.removeEventListener(type, listener, options);
+    });
+    activeListeners = [];
+
+    // 2. Stop alle timers
+    activeIntervals.forEach(id => clearInterval(id));
+    activeIntervals = [];
+    activeTimeouts.forEach(id => clearTimeout(id));
+    activeTimeouts = [];
+
+    // 3. Zet de motoren direct stil
+    setMotors(0, 0);
+
+    isScriptRunning = false;
+    runScriptBtn.disabled = false;
+    stopScriptBtn.disabled = true;
+    scriptStatusEl.innerText = 'Script staat stil';
+    scriptStatusEl.className = 'status-pill';
+  }
+
+  runScriptBtn.addEventListener('click', startUserScript);
+  stopScriptBtn.addEventListener('click', stopUserScript);
+
+  // ==========================================
+  // 3. FIREBASE FIRESTORE CRUD & AUTH
+  // ==========================================
+  const scriptsCollection = db.collection('wedo_scripts');
+  let allScripts = [];
+  let currentScriptId = null;
+  let isAdmin = false;
+
+  const scriptSelect = document.getElementById('scriptSelect');
+  const scriptTitleInput = document.getElementById('scriptTitleInput');
+  const adminTitleGroup = document.getElementById('adminTitleGroup');
+  const crudControls = document.getElementById('crudControls');
+
+  // Standaard voorbeeldcode voor als de database nog helemaal leeg is
+  const defaultExampleCode = `let isDriving = false;
+
+window.addEventListener('keydown', (event) => {
+  if (event.key === 'ArrowUp' && !isDriving) {
+    isDriving = true;
+    setMotors(80, 80);
+  }
+});
+
+window.addEventListener('keyup', (event) => {
+  if (event.key === 'ArrowUp') {
+    isDriving = false;
+    setMotors(0, 0);
+  }
+});`;
+
+  // Luister realtime naar wijzigingen in Firestore
+  scriptsCollection.orderBy('title').onSnapshot((snapshot) => {
+    allScripts = [];
+    snapshot.forEach((doc) => {
+      allScripts.push({ id: doc.id, ...doc.data() });
+    });
+
+    renderDropdown();
+  }, (error) => {
+    console.error('Fout bij ophalen scripts:', error);
+    scriptSelect.innerHTML = '<option value="">Fout bij laden van scripts</option>';
+  });
+
+  function renderDropdown() {
+    const previousSelection = currentScriptId;
+    scriptSelect.innerHTML = '';
+
+    if (allScripts.length === 0) {
+      const opt = document.createElement('option');
+      opt.value = '';
+      opt.textContent = '-- Nog geen scripts gevonden --';
+      scriptSelect.appendChild(opt);
+      if (!isAdmin) {
+        codeEditor.value = defaultExampleCode;
+      }
+      return;
+    }
+
+    allScripts.forEach((script) => {
+      const opt = document.createElement('option');
+      opt.value = script.id;
+      opt.textContent = script.title;
+      scriptSelect.appendChild(opt);
+    });
+
+    // Herstel selectie of kies de eerste
+    if (previousSelection && allScripts.some(s => s.id === previousSelection)) {
+      scriptSelect.value = previousSelection;
+    } else {
+      scriptSelect.value = allScripts[0].id;
+    }
+    loadSelectedScript();
+  }
+
+  function loadSelectedScript() {
+    if (isScriptRunning) {
+      stopUserScript();
+    }
+
+    const selectedId = scriptSelect.value;
+    currentScriptId = selectedId || null;
+
+    const script = allScripts.find(s => s.id === selectedId);
+    if (script) {
+      scriptTitleInput.value = script.title;
+      codeEditor.value = script.code;
+    } else {
+      scriptTitleInput.value = '';
+      codeEditor.value = '';
+    }
+  }
+
+  scriptSelect.addEventListener('change', loadSelectedScript);
+
+  // --- CRUD ACTIES (ALLEEN ADMIN) ---
+
+  // CREATE (Nieuw leeg script klaarzetten)
+  document.getElementById('newScriptBtn').addEventListener('click', () => {
+    if (isScriptRunning) stopUserScript();
+    currentScriptId = null;
+    scriptSelect.value = '';
+    scriptTitleInput.value = 'Nieuw robot script';
+    codeEditor.value = defaultExampleCode;
+    scriptTitleInput.focus();
+  });
+
+  // CREATE / UPDATE (Opslaan in Firestore)
+  document.getElementById('saveScriptBtn').addEventListener('click', async () => {
+    const title = scriptTitleInput.value.trim();
+    const code = codeEditor.value;
+
+    if (!title) {
+      alert('Geef het script eerst een duidelijke naam!');
+      return;
+    }
+
+    try {
+      if (currentScriptId) {
+        // Bestaand script updaten
+        await scriptsCollection.doc(currentScriptId).update({
+          title: title,
+          code: code,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        alert('Script succesvol bijgewerkt! ✅');
+      } else {
+        // Nieuw script aanmaken
+        const docRef = await scriptsCollection.add({
+          title: title,
+          code: code,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        currentScriptId = docRef.id;
+        alert('Nieuw script opgeslagen! 🎉');
+      }
+    } catch (error) {
+      alert('Opslaan mislukt (ben je wel ingelogd als admin?):\n' + error.message);
+    }
+  });
+
+  // DELETE (Verwijderen uit Firestore)
+  document.getElementById('deleteScriptBtn').addEventListener('click', async () => {
+    if (!currentScriptId) {
+      alert('Kies eerst een opgeslagen script om te verwijderen.');
+      return;
+    }
+
+    const confirmDelete = confirm(`Weet je zeker dat je "${scriptTitleInput.value}" wilt verwijderen?`);
+    if (!confirmDelete) return;
+
+    try {
+      await scriptsCollection.doc(currentScriptId).delete();
+      currentScriptId = null;
+      alert('Script verwijderd! 🗑️');
+    } catch (error) {
+      alert('Verwijderen mislukt:\n' + error.message);
+    }
+  });
+
+  // --- AUTHENTICATIE UI LOGICA ---
+  const toggleAdminLoginBtn = document.getElementById('toggleAdminLoginBtn');
+  const adminLoginBox = document.getElementById('adminLoginBox');
+  const logoutBtn = document.getElementById('logoutBtn');
+  const loginError = document.getElementById('loginError');
+
+  toggleAdminLoginBtn.addEventListener('click', () => {
+    adminLoginBox.classList.toggle('hidden');
+    loginError.innerText = '';
+  });
+
+  document.getElementById('cancelLoginBtn').addEventListener('click', () => {
+    adminLoginBox.classList.add('hidden');
+  });
+
+  document.getElementById('loginSubmitBtn').addEventListener('click', async () => {
+    const email = document.getElementById('adminEmail').value;
+    const password = document.getElementById('adminPassword').value;
+    loginError.innerText = '';
+
+    try {
+      await auth.signInWithEmailAndPassword(email, password);
+      adminLoginBox.classList.add('hidden');
+    } catch (err) {
+      loginError.innerText = 'Inloggen mislukt: ' + err.message;
+    }
+  });
+
+  logoutBtn.addEventListener('click', () => {
+    auth.signOut();
+  });
+
+  // Reageer op inlogstatus van Firebase Auth
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      isAdmin = true;
+      toggleAdminLoginBtn.classList.add('hidden');
+      logoutBtn.classList.remove('hidden');
+      adminTitleGroup.classList.remove('hidden');
+      crudControls.classList.remove('hidden');
+      codeEditor.readOnly = false;
+    } else {
+      isAdmin = false;
+      toggleAdminLoginBtn.classList.remove('hidden');
+      logoutBtn.classList.add('hidden');
+      adminTitleGroup.classList.add('hidden');
+      crudControls.classList.add('hidden');
+      codeEditor.readOnly = true;
+    }
+  });
+</script>
+
+</body>
+</html>
