@@ -361,6 +361,7 @@
 
     try {
       const runFn = new Function(
+        'wedoOutputChar', // <--- Hier meegegeven als parameter!
         'window',
         'document',
         'setInterval',
@@ -368,7 +369,8 @@
         userCode
       );
 
-      runFn(sandboxWindow, sandboxWindow, sandboxSetInterval, sandboxSetTimeout);
+      // <--- En hier meegegeven als waarde:
+      runFn(window.wedoOutputChar, sandboxWindow, sandboxWindow, sandboxSetInterval, sandboxSetTimeout);
 
       isScriptRunning = true;
       runScriptBtn.disabled = true;
